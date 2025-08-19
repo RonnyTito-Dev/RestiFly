@@ -1,0 +1,45 @@
+name: stack_restifly
+
+services:
+    mysql:
+        image: mysql:latest
+        container_name: mysql_container
+        restart: no
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            TZ: America/Lima
+        ports:
+            - ${DB_PORT}:${DB_PORT}             # HostPort : HostContainer
+        volumes:
+            - mysql_data:/var/lib/mysql
+        networks:
+            - restifly_network
+        
+    
+    minio:
+        image: minio/minio:latest
+        container_name: minio_container
+        restart: no
+        environment:
+            MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+            TZ: America/Lima
+        command: server /data --console-address ":${MINIO_PORT_WEB}"
+        ports:
+            - ${MINIO_PORT_S3}:${MINIO_PORT_S3}       # API S3
+            - ${MINIO_PORT_WEB}:${MINIO_PORT_WEB}     # Panel web
+        volumes:
+            - minio_data:/data
+        networks:
+            - restifly_network
+        
+volumes:
+    mysql_data:
+    minio_data:
+
+networks:
+    restifly_network:
+        driver: bridge

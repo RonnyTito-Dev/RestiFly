@@ -1,0 +1,134 @@
+/* 📂 src\index.css */
+
+@import '@fontsource/poppins/100.css';
+@import '@fontsource/poppins/200.css';
+@import '@fontsource/poppins/300.css';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+@import '@fontsource/poppins/800.css';
+@import '@fontsource/poppins/900.css';
+
+@import '@fontsource-variable/nunito';
+
+
+@import "tailwindcss";
+@plugin '../hero.ts';
+
+/* Note: You may need to change the path to fit your project structure */
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
+
+
+/*  Personalizar nuestro tema */
+@theme  {
+
+  /* ================ Fuentes Personalizadas ================ */
+
+  --font-primary: "Poppins", sans-serif;
+  --font-secondary: "Nunito Variable", sans-serif;
+
+
+  /* ================ Paleta de colores ================ */
+
+  --color-primary-shadow: #FEFCE8;                    /* tono => 50 */
+  --color-primary-light: #FFF9C2;                     /* tono => 100 */
+  --color-primary-light-hover: #FFF087;               /* tono => 200 */
+  --color-primary-border: #FFE043;                    /* tono => 300 */
+  --color-primary-base: #FFCC12;                      /* tono => 400 */
+  --color-primary-hover: #EFB303;                     /* tono => 500 */
+
+  --color-secondary-shadow: #FFF9EC;                  /* tono => 50 */
+  --color-secondary-light: #FFF1D3;                   /* tono => 100 */
+  --color-secondary-light-hover: #FFDEA5;             /* tono => 200 */
+  --color-secondary-border: #FFC66D;                  /* tono => 300 */
+  --color-secondary-base: #FF850A;                    /* tono => 500 */
+  --color-secondary-hover: #FF6D01;                   /* tono => 600 */
+
+  --color-accent-shadow: #FFF0F0;                     /* tono => 50 */
+  --color-accent-light: #FFDDDD;                      /* tono => 100 */
+  --color-accent-light-hover: #FFC1C0;                /* tono => 200 */
+  --color-accent-border: #FF9594;                     /* tono => 300 */
+  --color-accent-base: #FF2623;                       /* tono => 500 */
+  --color-accent-hover: #FF0401;                      /* tono => 600 */
+
+  --color-neutro-white: #FFFFFF;                      /* tono => 0 */
+  --color-neutro-shadow: #F8FAFC;                     /* tono => 50 */
+  --color-neutro-light: #F1F5F9;                      /* tono => 100 */
+  --color-neutro-light-hover: #E2E8F0;                /* tono => 200 */
+  --color-neutro-border: #CAD5E2;                     /* tono => 300 */
+  --color-neutro-base: #62748E;                       /* tono => 500 */
+  --color-neutro-hover: #45556C;                      /* tono => 600 */
+  --color-neutro-dark: #314158;                       /* tono => 700 */
+  --color-neutro-deep: #1D293D;                       /* tono => 800 */
+  --color-neutro-strong: #0F172B;                     /* tono => 900 */
+  --color-neutro-black: #020618;                      /* tono => 960 */
+
+
+  /* ================ Paleta de colores estados ================ */
+
+  --color-info-shadow: #F6F3FF;                       /* tono => 50 */
+  --color-info-light: #EFE9FE;                        /* tono => 100 */
+  --color-info-light-hover: #E0D7FD;                  /* tono => 200 */
+  --color-info-border: #B18DF8;                       /* tono => 400 */
+  --color-info-base: #8C4BF2;                         /* tono => 500 */
+  --color-info-hover: #8C3DEA;                        /* tono => 600 */
+
+  --color-warning-shadow: #FFFEEA;                    /* tono => 50 */
+  --color-warning-light: #FFF8C5;                     /* tono => 100 */
+  --color-warning-light-hover: #FFF285;               /* tono => 200 */
+  --color-warning-border: #FFD41B;                    /* tono => 400 */
+  --color-warning-base: #FFB300;                      /* tono => 500 */
+  --color-warning-hover: #E28900;                     /* tono => 600 */
+
+  --color-danger-shadow: #FFF1F2;                     /* tono => 50 */
+  --color-danger-light: #FFE4E6;                      /* tono => 100 */
+  --color-danger-light-hover: #FFCCD3;                /* tono => 200 */
+  --color-danger-border: #FF637E;                     /* tono => 400 */
+  --color-danger-base: #FF2056;                       /* tono => 500 */
+  --color-danger-hover: #EC003F;                      /* tono => 600 */
+
+  --color-success-shadow: #EFFEF3;                    /* tono => 50 */
+  --color-success-light: #DAFEE4;                     /* tono => 100 */
+  --color-success-light-hover: #B7FBCC;               /* tono => 200 */
+  --color-success-border: #30E76B;                    /* tono => 400 */
+  --color-success-base: #16D153;                      /* tono => 500 */
+  --color-success-hover: #0CAD40;                     /* tono => 600 */
+
+}
+
+
+/* ====== Reset Esencial ====== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  height: 100%;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
