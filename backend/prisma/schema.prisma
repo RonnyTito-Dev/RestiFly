@@ -19,31 +19,31 @@ datasource db {
 // ----------------------- MIS MODELOS -----------------------
 // -----------------------------------------------------------
 
+// ================================================================================
+// 🏁 1. CONFIGURACIÓN GENERAL Y RESTAURANTE
+// ================================================================================
+
 // ============= 🔒🟢 | Configuracion del restaurant =============
 
 model RestaurantConfig {
-  id                      Int                       @id @default(autoincrement())
-  name                    String                    @db.VarChar(100)                        // Nombre Restaurant       (Libre + trim)
-  activeLogoId            Int?                      @map("active_logo_id")
-
-  currency                String                    @db.Char(3) @default("PEN")             //            (Upper case + trim)
-  address                 String?                   @db.VarChar(255)                        //            (Title case + trim)
-  phone                   String?                   @db.VarChar(15)                         //            (trim)
-  email                   String?                   @db.VarChar(50)                         //            (lower case + trim)
-
-  taxName                 String?                   @db.VarChar(20) @default("IGV") @map("tax_name")
-  taxIncluded             Boolean                   @default(true) @map("tax_incluided")                 // ¿El precio incluye impuesto?
-  taxType                 String?                   @db.VarChar(10) @default("INCLUIDO")                 // "INCLUIDO", "EXCLUIDO"
-  taxRate                 Decimal?                  @db.Decimal(5, 4) @default(0.18) @map("tax_rate")    // 18% = 0.18
-
-
-  createdAt               DateTime                  @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                    @db.Char(12)  @map("created_by")
-  updatedAt               DateTime?                 @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                   @db.Char(12) @map("updated_by")
-
-  @@map("restaurant_config")
-
+  id                      Int                       @id @default(autoincrement()) @map("restc_id")                            // (Required) [[CORE]] => 1 || Identificador único del registro de configuración
+  name                    String                    @db.VarChar(100) @map("restc_name")                                       // (Min:1, Max:100, Required) [[Trim]] => "Restaurante El Sol" || Nombre del restaurante
+  activeLogoId            Int?                      @map("restc_active_logo_id")                                              // (Nullable) => 1 || ID del logo activo del restaurante
+  currency                String                    @db.Char(3) @default("PEN") @map("restc_currency")                        // (Min:3, Max:3, Required) [[Upper Case + Trim]] => "PEN" || Código de moneda del restaurante
+  address                 String?                   @db.VarChar(255) @map("restc_address")                                    // (Nullable, Min:5, Max:255) [[Title Case + Trim]] => "Av. Principal 123, Lima" || Dirección del restaurante
+  phone                   String?                   @db.VarChar(15)  @map("restc_phone")                                      // (Nullable, Min:6, Max:15) [[Trim]] => "+51987654321" || Teléfono de contacto del restaurante
+  email                   String?                   @db.VarChar(50)  @map("restc_email")                                      // (Nullable, Min:5, Max:50) [[validEmail, Lower Case + Trim]] => "contacto@restaurante.com" || Correo electrónico del restaurante
+  taxName                 String?                   @db.VarChar(20) @default("IGV") @map("restc_tax_name")                    // (Nullable, Min:2, Max:20) [[Title Case + Trim]] => "IGV" || Nombre del impuesto aplicado
+  taxIncluded             Boolean                   @default(true) @map("restc_tax_included")                                 // (Required) => true || Indica si el precio de los productos incluye impuesto
+  taxType                 String?                   @db.VarChar(10) @default("INCLUIDO") @map("restc_tax_type")                // (Nullable, Min:8, Max:10) [[Upper Case + Trim]] => "INCLUIDO" || Tipo de manejo del impuesto: INCLUIDO o EXCLUIDO
+  taxRate                 Decimal?                  @db.Decimal(5, 4) @default(0.18) @map("restc_tax_rate")                    // (Nullable, Min:0.0000, Max:1.0000) [[validDecimal]] => 0.18 || Tasa del impuesto (ej. 18% = 0.18)
+  
+  createdAt               DateTime                  @db.Timestamp(0) @default(now()) @map("restc_created_at")                  // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación del registro
+  createdBy               String                    @db.Char(12)  @map("restc_created_by")                                    // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del usuario que creó el registro
+  updatedAt               DateTime?                 @db.Timestamp(0) @updatedAt @map("restc_updated_at")                      // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de última actualización
+  updatedBy               String?                   @db.Char(12) @map("restc_updated_by")                                     // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del usuario que actualizó el registro
+  
+  @@map("restaurant_config_restc_")
 }
 
 
@@ -51,332 +51,53 @@ model RestaurantConfig {
 // ============= 🔓🟢 | Themas =============
 
 model Theme {
-  name                    String                    @id @db.Char(20)            // "MI Temita"    (Capitalized case + trim)
-  primaryColor            String                    @db.Char(7)                 // #_______ color base 500       (Upper case + trim)
-  secondaryColor          String                    @db.Char(7)                 // #_______ color base 500       (Upper case + trim)
-  accentColor             String                    @db.Char(7)                 // #_______ color base 500       (Upper case + trim)
-  neutralColor            String                    @db.Char(7)                 // #_______ color base 500       (Upper case + trim)
-
-  isSystem                Boolean                   @default(false) @map("is_system")
-  isPublic                Boolean                   @default(true) @map("is_public")
-
-  createdUserDocument     String?                   @db.Char(12)  @map("user_document_number")
-  user                    User?                     @relation("UserCreatedThemes", fields: [createdUserDocument], references: [documentNumber])
-  createdAt               DateTime                  @db.Timestamp(0) @default(now()) @map("created_at")
-
-  updatedAt               DateTime?                 @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                   @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?                 @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                   @db.Char(12)  @map("deleted_by")
-
-  usersUsingThisTheme     User[]                    @relation("UserTheme")
-  customerUsingThisTheme  Customer[]                @relation("CustomerTheme")
-
-  @@map("themes")
-}
-
-
-
-// ============= 🔓🟢 | Model Tipos Documentos =============
-
-model DocumentType {
-  name                    String                  @id @db.Char(10)                          // DNI, RUC, CE, PASAPORTE     (Upper case + trim)
-  description             String?                 @db.VarChar(255)                          // (Title case + trim)
-  digitLength             Int                     @map("digit_lenght")
-  color                   String?                 @db.Char(7)
-  isActive                Boolean                 @default(true) @map("is_active")
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12)  @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12)  @map("deleted_by")
-
-  customers               Customer[]
-  users                   User[]
-
-  @@map("document_types")                                
-}
-
-
-
-// ============= 🔒⚫ | Model Estados Cuenta =============
-
-model AccountStatus {
-  code                    String                  @id @db.Char(10)                         // ACTIVE, INACTIVE, SUSPENDED    (Snake + Upper case + trim)
-  name                    String                  @db.VarChar(20)                          // Activa, Inactiva, Suspendida   (Title Case + trim)
-  description             String?                 @db.VarChar(255)                         // (Capitalized case + trim)
-  color                   String?                 @db.Char(7)
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12)  @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-
-  users                   User[]
-  customers               Customer[]
-
-  @@map("account_statuses")
-}
-
-
-
-// ============= 🔒⚫ | Model Categorías de Permisos =============
-
-model PermissionCategory {
-  code                    String                  @id @db.Char(40)         // user_management, product_management, customer_management, etc.
-  name                    String                  @db.VarChar(50)          // Gestión de Usuarios, Gestión de Productos    (Capitalized case + trim)
-  description             String?                 @db.VarChar(255)         // Descripción de la categoría    (Capitalized case + trim)
-  color                   String?                 @db.Char(7)
-          
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12)  @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-
-  permissions             Permission[]
-
-  @@map("permission_categories")
-}
-
-
-
-// ============= 🔒⚫ | Model Permisos =============
-
-model Permission {
-  code                    String                       @id @db.Char(40)                         // view_user, create_user, update_user, delete_user, restore_user
-  name                    String                       @unique @db.VarChar(50)                  // Ver Usuarios, Crear Usuarios, Editar Usuarios   (Capitalized case + trim)
-  description             String?                      @db.VarChar(255)                         // (Capitalized case + trim)
-  categoryCode            String                       @db.Char(25) @map("category_code")
-  category                PermissionCategory           @relation(fields: [categoryCode], references: [code])
-
-  createdAt               DateTime                     @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                       @db.Char(12)  @map("created_by")
-  updatedAt               DateTime?                    @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                      @db.Char(12) @map("updated_by")
-
-  rolePermissions         RolePermission[]
-
-  @@map("permissions")
-}
-
-
-
-// ============= 🔓🟢 | Model Roles =============
-
-model Role {
-  name                    String                  @id @db.Char(20)                    // Admin, Super admin, Chef, Mozo, Cajero, Barra   (Capitalized Case + Trim)
-  description             String?                 @db.VarChar(255)                    // (Title case + trim)
-  color                   String?                 @db.Char(7)
-  isActive                Boolean                 @default(true) @map("is_active")
-
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12)  @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12)  @map("deleted_by")
-
-  rolePermissions         RolePermission[]
-  users                   User[]
-
-
-  @@map("roles")
-}
-
-
-
-// ============= 🔓🟢 | Model Role Permission =============
-
-model RolePermission {
-  id                Int             @id @default(autoincrement())
-  roleName          String          @db.Char(20) @map("role_name")
-  role              Role            @relation(fields: [roleName], references: [name])
-  permissionCode    String          @db.Char(40) @map("permission_code")
-  permission        Permission      @relation(fields: [permissionCode], references: [code])
-
-  createdAt         DateTime        @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy         String          @db.Char(12)  @map("created_by")
-  updatedAt         DateTime?       @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy         String?         @db.Char(12) @map("updated_by")
-
-  @@unique([roleName, permissionCode])
-
-  @@map("role_permissions")
-
-}
-
-
-
-// ============= 🔓🟢 | Model Usuarios (Empleados) =============
-
-model User {
-  documentNumber              String                  @id @db.Char(12) @map("document_number")          // DNI como clave primaria
-  username                    String                  @unique @db.VarChar(30)                           // (Libre + trim)
-  email                       String                  @unique @db.VarChar(50)                          // (lower case + trim)
-  password                    String                  @db.Text                                          // (Libre + trim)
-  pin                         String?                 @db.VarChar(6)                                    // (Trim)
-
-  fullName                    String                  @db.VarChar(150) @map("full_name")                // (Title case + trim)
-  phoneNumber                 String?                 @unique @db.VarChar(15) @map("phone_number")      // (trim)
-  birthDate                   DateTime?               @db.Date @map("birth_date")
-  hireDate                    DateTime?               @db.Date @map("hire_date")
-  salary                      Decimal?                @db.Decimal(10, 2)
-  emergencyContactName        String?                 @db.VarChar(100) @map("emergency_contact_name")   // (Title case + trim)
-  emergencyContactPhone       String?                 @db.VarChar(15) @map("emergency_contact_phone")   // (trim)
-
-  documentTypeName            String                  @db.Char(10) @map("document_type_name")
-  documentType                DocumentType            @relation(fields: [documentTypeName], references: [name])
-
-  roleName                    String                  @db.Char(20) @map("role_name")
-  role                        Role                    @relation(fields: [roleName], references: [name])
-  accountStatusCode           String                  @db.Char(10) @map("account_status_code") @default("ACTIVE")
-  accountStatus               AccountStatus           @relation(fields: [accountStatusCode], references: [code])
-  themeName                   String?                 @db.Char(20) @map("theme_name")
-  theme                       Theme?                  @relation("UserTheme", fields: [themeName], references: [name])
+  name                        String                    @id @db.Char(20) @map("them_name")                                     // (Min:1, Max:20, Required) [[Capitalized Case + Trim, CORE]] => "Tema Oscuro" || Nombre del tema visual
+  primaryColor                String                    @db.Char(7) @map("them_primary_color")                                // (Min:7, Max:7, Required) [[Upper Case + Trim]] => "#1F2937" || Color primario del tema
+  secondaryColor              String                    @db.Char(7) @map("them_secondary_color")                              // (Min:7, Max:7, Required) [[Upper Case + Trim]] => "#111827" || Color secundario del tema
+  accentColor                 String                    @db.Char(7) @map("them_accent_color")                                 // (Min:7, Max:7, Required) [[Upper Case + Trim]] => "#F59E0B" || Color acento del tema
+  neutralColor                String                    @db.Char(7) @map("them_neutral_color")                                // (Min:7, Max:7, Required) [[Upper Case + Trim]] => "#6B7280" || Color neutro del tema
+  isSystem                    Boolean                   @default(false) @map("them_is_system")                                // (Required) => false || Indica si el tema es del sistema
+  isPublic                    Boolean                   @default(true) @map("them_is_public")                                 // (Required) => true || Indica si el tema es visible para otros usuarios
+  userDocumentCreator         String?                   @db.Char(12)  @map("user_document_creator")                           // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del usuario que creó el tema
+  user                        User?                     @relation(fields: [userDocumentCreator], references: [document])       // Relación con el usuario creador del tema
   
-  createdAt                   DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy                   String                  @db.Char(12)  @map("created_by")
-  updatedAt                   DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy                   String?                 @db.Char(12) @map("updated_by")
-  deletedAt                   DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy                   String?                 @db.Char(12)  @map("deleted_by")
-
-  // Relaciones
-  openedCashBoxes             CashBox[]               @relation("CashBoxOpener")
-  closedCashBoxes             CashBox[]               @relation("CashBoxCloser")
-  inventoryMovements          InventoryMovement[]
-  logs                        Log[]
-  sessions                    Session[]
-
-  combinedTables              CombineTable[]          @relation("UserTableCombiner")
-  releasedTables              CombineTable[]          @relation("UserTableReleaser")
-
-  tablesSessionOpened         TableSession[]          @relation("TableSessionOpener")
-  tablesSessionClosed         TableSession[]          @relation("TableSessionCloser")
-  ordersCreated               Order[]                 @relation("OrderCreator")
-  ordersClosed                Order[]                 @relation("OrderCloser")
-  createdThemes               Theme[]                 @relation("UserCreatedThemes")
-  paymentsReceived            Payment[]               @relation("PaymentsReceived")
-
-  @@index([username])
-  @@index([documentNumber])
-  @@index([email])
-  @@index([accountStatusCode])
-  @@index([email, accountStatusCode])
-
-
-  @@map("users")
+  createdAt                   DateTime                  @db.Timestamp(0) @default(now()) @map("them_created_at")               // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación del tema
+  updatedAt                   DateTime?                 @db.Timestamp(0) @updatedAt @map("them_updated_at")                   // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de última actualización
+  updatedBy                   String?                   @db.Char(12) @map("them_updated_by")                                  // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del usuario que actualizó el tema
+  deletedAt                   DateTime?                 @db.Timestamp(0) @map("them_deleted_at")                             // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy                   String?                   @db.Char(12)  @map("them_deleted_by")                                 // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del usuario que eliminó el tema
+  
+  usersUsingThisTheme         userProfile[]
+  customersUsingThisTheme     CustomerProfile[]
+  
+  @@map("themes_them")
 }
 
 
 
-// ============= 🔓🟢 | Model Sesiones =============
-
-model Session {
-  id                      String                    @id @default(uuid())
-  userDocumentNumber      String?                   @db.Char(12) @map("user_document_number") 
-  user                    User?                     @relation(fields: [userDocumentNumber], references: [documentNumber])
-  customerDocumentNumber  String?                   @db.Char(12) @map("customer_number")
-  customer                Customer?                 @relation(fields: [customerDocumentNumber], references: [documentNumber])
-
-  token                   String                    @unique @db.VarChar(255)
-  deviceInfo              String?                   @map("device_info") @db.VarChar(255)
-  ipAddress               String?                   @map("ip_address") @db.VarChar(50)
-  isActive                Boolean                   @default(true) @map("is_active")
-  expiresAt               DateTime                  @map("expires_at")
-  closedAt                DateTime?                 @db.Timestamp(0) @map("closed_at")
-  closedBy                String?                   @db.Char(12) @map("closed_by")
-
-  createdAt               DateTime                  @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                    @db.Char(12)  @map("created_by")
-  updatedAt               DateTime?                 @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                   @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?                 @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                   @db.Char(12)  @map("deleted_by")
-
-  @@index([userDocumentNumber])
-  @@index([customerDocumentNumber])
-  @@index([token])
-  @@index([isActive])
-  @@index([userDocumentNumber, isActive])
-  @@index([customerDocumentNumber, isActive])
-
-  @@map("sessions")
-}
 
 
+// ================================================================================
+// 🏢 2. ESTRUCTURA FÍSICA DEL RESTAURANTE
+// ================================================================================
 
-// ============= 🔓🟢 | Model Clientes =============
-
-model Customer {
-  documentNumber          String                  @id @db.Char(12) @map("document_number")                 // DNI como clave primaria
-  username                String?                 @unique @db.VarChar(30)                                  // (Libre + trim)
-  email                   String?                 @unique @db.VarChar(50)                                 // (lower case + trim)
-  password                String?                 @db.Text                                                 // (Libre + trim)
-
-  fullName                String                  @db.VarChar(150) @map("full_name")                       // (Title case + trim)
-  phoneNumber             String?                 @unique @db.VarChar(15) @map("phone_number")             // (trim)
-  documentTypeName        String                  @db.Char(10)  @map("document_type_name")
-  documentType            DocumentType            @relation(fields: [documentTypeName], references: [name])
-
-  accountStatusCode       String                  @db.Char(10) @map("account_status_code") @default("ACTIVE")
-  accountStatus           AccountStatus           @relation(fields: [accountStatusCode], references: [code])
-  themeName               String?                 @db.Char(20) @map("theme_name")
-  theme                   Theme?                  @relation("CustomerTheme", fields: [themeName], references: [name])
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12)  @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12)  @map("deleted_by")
-
-  sessions                Session[]
-  orders                  Order[]
-  logs                    Log[]
-  paymentsMade            Payment[]               @relation("PaymentsMade")
-
-  @@index([documentNumber])
-  @@index([email])
-  @@index([accountStatusCode])
-  @@index([fullName])
-
-  @@map("customers")
-}
-
-
-
-// ============= 🔓🟢 | Model Caja =============
-
-model CashBox {
-  id                      Int                     @id @default(autoincrement())
-  openerUserDocument      String                  @db.Char(12) @map("opener_user_document")
-  opener                  User                    @relation("CashBoxOpener", fields: [openerUserDocument], references: [documentNumber])
-  openedAt                DateTime                @db.Timestamp(0) @default(now()) @map("opened_at")
-  initialAmount           Decimal                 @db.Decimal(10, 2) @map("initial_amount")
-
-  closerUserDocument      String?                 @db.Char(12) @map("closer_user_document")
-  closer                  User?                   @relation("CashBoxCloser", fields: [closerUserDocument], references: [documentNumber])
-  closedAt                DateTime?               @map("closed_at")
-  finalAmount             Decimal?                @db.Decimal(10, 2) @map("final_amount")
-
-  totalSales              Decimal?                @db.Decimal(10, 2) @map("total_sales")
-  notes                   String?                 @db.VarChar(255)
-
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12)  @map("deleted_by")
-
-  payments                Payment[]
-
-  @@index([openerUserDocument])
-  @@index([closerUserDocument])
-
-  @@map("cash_boxes")
+// ============= 🔓🟢 | Model Zonas =============
+model RestaurantZone {
+  name                    String                  @id @db.Char(20) @map("restz_name")                                          // (Min:1, Max:20, Required) [[Capitalized Case + Trim, CORE]] => "Primer Piso, Terraza, Vip" || Nombre de la zona del restaurante
+  description             String?                 @db.VarChar(255) @map("restz_description")                                 // (Nullable, Min:5, Max:255) [[Title Case + Trim]] => "Área al aire libre con vista" || Descripción de la zona
+  color                   String?                 @db.Char(7) @map("restz_color")                                             // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#3B82F6" || Color asociado a la zona
+  isActive                Boolean                 @default(true)  @map("restz_is_active")                                    // (Required) => true || Indica si la zona está activa
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("restz_created_at")                   // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("restz_created_by")                                       // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("restz_updated_at")                       // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("restz_updated_by")                                      // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("restz_deleted_at")                                 // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("restz_deleted_by")                                      // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  tables                  Table[]
+  
+  @@map("restaurant_zones_restz")
 }
 
 
@@ -384,67 +105,45 @@ model CashBox {
 // ============= 🔓🟢 | Model Estados Mesa =============
 
 model TableStatus {
-  code                    String                  @id @db.Char(20)                  // AVAILABLE, BUSY, CLEANING, MAINTENANCE
-  name                    String                  @db.Char(20)                      // Disponible, Ocupada, En Limpieza, Mantenimiento (Capitalized case + trim)
-  description             String?                 @db.VarChar(255)
-  color                   String?                 @db.Char(7)
+  code                    String                  @id @db.Char(20) @map("tabls_code")                                          // (Min:3, Max:20, Required) [[Upper Case + Trim, CORE]] => "AVAILABLE, BUSY, CLEANING, MAINTENANCE" || Código del estado de la mesa
+  name                    String                  @unique @db.Char(20) @map("tabls_name")                                      // (Min:3, Max:20, Required) [[Capitalized Case + Trim]] => "Disponible, Ocupada, En Limpieza, Mantenimiento" || Nombre legible del estado
+  description             String?                 @db.VarChar(255) @map("tabls_description")                                 // (Nullable, Min:5, Max:255) [[Capitalized Case + Trim]] => "Mesa disponible para uso" || Descripción del estado
+  color                   String?                 @db.Char(7) @map("tabls_color")                                             // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#10B981" || Color visual del estado
 
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("tabls_created_at")                   // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("tabls_created_by")                                       // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("tabls_updated_at")                       // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("tabls_updated_by")                                      // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  
   tables                  Table[]
-
-  @@map("table_statuses")
+  
+  @@map("table_statuses_tabls")
 }
 
-
-
-// ============= 🔓🟢 | Model Zonas =============
-model RestaurantZone {
-  name                    String                  @id @db.Char(20)              // Primer Piso, Terraza, Vip (Capitalized Case +  trim)
-  description             String?                 @db.VarChar(255)              // (Title case + trim)
-  color                   String?                 @db.Char(7)
-  isActive                Boolean                 @default(true)
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  tables                  Table[]
-
-  @@map("restaurant_zones")
-}
 
 
 
 // ============= 🔓🟢 | Model Mesas =============
-
 model Table {
-  id                      Int                     @id @default(autoincrement())
-  name                    String                  @unique @db.VarChar(50)            // "Manco Capac", "Atahualpa"   (Capitalized case + trim)
-  capacity                Int                     @default(4)
-
-  zoneName                String?                 @db.Char(20) @map("zone_name")
-  zone                    RestaurantZone?         @relation(fields: [zoneName], references: [name])                 
-  statusCode              String                  @db.Char(20)  @map("status_code") @default("AVAILABLE")
-  status                  TableStatus             @relation(fields: [statusCode], references: [code])
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  tableSessions           TableSession[]
-  combineTableItems       CombineTableItem[]
-
-  @@map("tables")
+  id                            Int                               @id @default(autoincrement()) @map("table_id")              // (Required) [[CORE]] => 1 || Identificador único de la mesa
+  name                          String                            @unique @db.VarChar(50) @map("table_name")                 // (Min:2, Max:50, Required) [[Capitalized Case + Trim]] => "Manco Capac, Atahualpa" || Nombre de la mesa
+  capacity                      Int                               @default(4) @map("table_capacity")                         // (Required, Min:1) [[validPositive]] => 4 || Capacidad máxima de personas
+  restaurantZoneName            String?                           @db.Char(20) @map("restz_name")                            // (Nullable, Min:1, Max:20) [[Trim]] => "VIP" || Nombre de la zona donde está la mesa
+  restaurantZone                RestaurantZone?                   @relation(fields: [restaurantZoneName], references: [name]) // Relación con la zona
+  tableStatusCode               String                            @db.Char(20)  @map("tabls_code") @default("AVAILABLE")      // (Min:3, Max:20, Required) [[Upper Case + Trim]] => "BUSY" || Código del estado actual de la mesa
+  tableStatus                   TableStatus                       @relation(fields: [tableStatusCode], references: [code])    // Relación con el estado
+  
+  createdAt                     DateTime                          @db.Timestamp(0) @default(now()) @map("table_created_at")  // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy                     String                            @db.Char(12) @map("table_created_by")                      // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt                     DateTime?                         @db.Timestamp(0) @updatedAt @map("table_updated_at")       // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy                     String?                           @db.Char(12) @map("table_updated_by")                     // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt                     DateTime?                         @db.Timestamp(0) @map("table_deleted_at")                // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy                     String?                           @db.Char(12) @map("table_deleted_by")                     // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  combineTableItems             CombineTableItem[]
+  commands                      Command[]
+  
+  @@map("tables_table")
 }
 
 
@@ -452,566 +151,889 @@ model Table {
 // ============= 🔓🟢 | Mesas Combinadas (Grupo) =============
 
 model CombineTable {
-  id                      Int                     @id @default(autoincrement())
-  name                    String                  @db.VarChar(50)
-
-  combinerUserDocument    String                  @db.Char(12) @map("combiner_user_document")
-  combiner                User                    @relation("UserTableCombiner", fields: [combinerUserDocument], references: [documentNumber])
-  combineAt               DateTime                @db.Timestamp(0) @default(now()) @map("combined_at")
-  isActive                Boolean                 @default(true) @map("is_active")
+  id                      Int                     @id @default(autoincrement()) @map("combt_id")                                            // (Required) [[CORE]] => 1 || Identificador único del grupo de mesas combinadas
+  name                    String                  @db.VarChar(50) @map("combt_name")                                                        // (Min:1, Max:50, Required) [[Capitalized Case + Trim]] => "Grupo VIP" || Nombre del grupo de mesas combinadas
+  userDocumentCombiner    String                  @db.Char(12) @map("user_document_combiner")                                               // (Min:8, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del usuario que combinó las mesas
+  combiner                User                    @relation("UserTableCombiner", fields: [userDocumentCombiner], references: [document])    // Relación con el usuario que combinó
+  combinerAt              DateTime                @db.Timestamp(0) @default(now()) @map("combt_combiner_at")                                // (Required) => "2025-04-05T10:00:00Z" || Fecha y hora en que se combinaron las mesas
+  isActive                Boolean                 @default(true) @map("combt_is_active")                                                    // (Required) => true || Indica si el grupo de mesas sigue activo
+  userDocumentReleaser    String?                 @db.Char(12) @map("user_document_releaser")                                               // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del usuario que liberó el grupo
+  releaser                User?                   @relation("UserTableReleaser", fields: [userDocumentReleaser], references: [document])    // Relación con el usuario que liberó
+  releasedAt              DateTime?               @db.Timestamp(0) @map("combt_releaser_at")                                                // (Nullable) => "2025-04-05T10:00:00Z" || Fecha en que se liberó el grupo de mesas
   
-  releaserUserDocument    String?                 @db.Char(12) @map("releaser_user_document")
-  releaser                User?                   @relation("UserTableReleaser", fields: [releaserUserDocument], references: [documentNumber])
-  releasedAt              DateTime?               @db.Timestamp(0) @map("released_at")
-
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  tables                  CombineTableItem[]
-  tableSessions           TableSession[]
-
-  @@map("combine_tables")
-
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("combt_updated_at")                                      // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de última actualización
+  updatedBy               String?                 @db.Char(12) @map("combt_updated_by")                                                     // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del usuario que actualizó el registro
+  deletedAt               DateTime?               @db.Timestamp(0) @map("combt_deleted_at")                                                 // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("combt_deleted_by")                                                     // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del usuario que eliminó el registro
+  
+  tables                  CombineTableItem[]                                                                                                // Items que componen el grupo de mesas
+  commands                Command[]                                                                                                         // Comandas asociadas al grupo
+  
+  @@map("combine_tables_combt")
 }
 
 
 
 // ============= 🔓🟢 | Mesas Combinadas Item  =============
+
 model CombineTableItem {
-  id                      Int                     @id @default(autoincrement())
-  combineTableId          Int                     @map("combine_table_id")
-  combineTable            CombineTable            @relation(fields: [combineTableId], references: [id])
-
-  tableId                 Int                     @map("table_id")
-  table                   Table                   @relation(fields: [tableId], references: [id])
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  @@unique([combineTableId, tableId])
-
-  @@map("combine_table_items")
+  id                      Int                     @id @default(autoincrement()) @map("combti_id")                            // (Required) [[CORE]] => 1 || Identificador único del item
+  combineTableId          Int                     @map("combt_id")                                                            // (Required) [[CORE]] => 1 || ID del grupo de combinación
+  combineTable            CombineTable            @relation(fields: [combineTableId], references: [id])                        // Relación con el grupo de combinación
+  tableId                 Int                     @map("table_id")                                                             // (Required) [[CORE]] => 5 || ID de la mesa incluida
+  table                   Table                   @relation(fields: [tableId], references: [id])                               // Relación con la mesa
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("combti_created_at")                  // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("combti_created_by")                                     // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("combti_updated_at")                      // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("combti_updated_by")                                     // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("combti_deleted_at")                                // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("combti_deleted_by")                                     // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  @@unique([combineTableId, tableId])                                                                                          // Único por combinación
+  @@map("combine_table_items_combti")
 }
 
 
 
-
-// ============= 🔓🟢 | Model Session Mesas =============
-
-model TableSession {
-  id                      Int                     @id @default(autoincrement())
-  tableId                 Int?                    @map("table_id")
-  table                   Table?                  @relation(fields: [tableId], references: [id])
-  combineTableId          Int?                    @map("combine_table_id")
-  combineTable            CombineTable?           @relation(fields: [combineTableId], references: [id])
-
-  openerUserDocument      String                  @db.Char(12) @map("opener_user_document")
-  opener                  User                    @relation("TableSessionOpener", fields: [openerUserDocument], references: [documentNumber])
-  openedAt                DateTime                @db.Timestamp(0) @default(now()) @map("opened_at")
-  numberPeople            Int                     @default(1) @map("number_people")
-  isActive                Boolean                 @default(true)  @map("is_active")
-
-  closerUserDocument      String?                 @db.Char(12) @map("closer_user_document")
-  closer                  User?                   @relation("TableSessionCloser", fields: [closerUserDocument], references: [documentNumber])
-  closedAt                DateTime?               @db.Timestamp(0) @map("closed_at")
-
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  orders                  Order[]
-
-  @@unique([tableId, combineTableId, isActive])
-  @@index([tableId])
-  @@index([combineTableId])
-  @@index([isActive])
-  @@index([openerUserDocument])
-
-  @@map("table_sessions")
-
-}
-
-
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++ Imagenes - Polimorf +++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-// ============= 🔓🟢 | Model Images =============
-
-model Image {
-  id                      Int                     @id @default(autoincrement())
-  name                    String                  @db.VarChar(50)                               // (Title case + trim)
-  altText                 String                  @db.VarChar(50) @map("alt_text")              // (Title case + trim)
-  url                     String                  @db.Text                                      // (Libre + trim)
-  imageableId             Int                     @map("imageable_id")
-  imageableType           String                  @db.VarChar(50) @map("imageable_type")        // (lower case - trim)
-  isActive                Boolean                 @default(true) @map("is_active")
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  @@index([imageableId, imageableType])
-  @@map("images")
-}
-
-
+// ================================================================================
+// 🛒 3. CATÁLOGO DE PRODUCTOS
+// ================================================================================
 
 // ============= 🔓🟢 | Model Marcas =============
 
 model Brand {
-  name                    String                  @id @db.Char(20)                            // "Inka Kola, Coca Cola"          (Capitalized Case + trim)
-  description             String?                 @db.VarChar(255)                            // (Title case + trim)
-  color                   String?                 @db.Char(7)                                 // (Upper case + trim)
-  isActive                Boolean                 @default(true) @map("is_active")
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  products                Product[]
-
-  @@map("brands")
+  name                    String                  @id @db.Char(20) @map("bran_name")                                         // (Min:1, Max:20, Required) [[Capitalized Case + Trim, CORE]] => "Inka Kola, Coca Cola" || Nombre de la marca del producto
+  description             String?                 @db.VarChar(255) @map("bran_description")                                 // (Nullable, Min:5, Max:255) [[Title Case + Trim]] => "Bebida gaseosa internacional" || Descripción de la marca
+  color                   String?                 @db.Char(7) @map("bran_color")                                             // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#FF0000" || Color asociado visualmente a la marca
+  isActive                Boolean                 @default(true) @map("bran_is_active")                                     // (Required) => true || Indica si la marca está activa
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("bran_created_at")                   // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("bran_created_by")                                       // (Min:8, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("bran_updated_at")                       // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("bran_updated_by")                                      // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("bran_deleted_at")                                 // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("bran_deleted_by")                                      // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  products                Product[]                                                                                            // Productos asociados a esta marca
+  
+  @@map("brands_bran")
 }
 
-
-
-// ============= 🔒⚫ | Model Estados Producto =============
-
-model ProductStatus {
-  code                    String                  @id @db.Char(20)                    // ACTIVE, INACTIVE, DISCONTINUED, OUT_OF_STOCK      (Upper case + trim)
-  name                    String                  @unique @db.VarChar(50)             // Activo, Inactivo , Descontinuado, Agotado    (Title case + trim)
-  description             String?                 @db.VarChar(255)                    //                              (Capitalized case + trim)
-  color                   String?                 @db.Char(7)
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-
-  products                Product[]
-
-  @@map("product_statuses")
-}
 
 
 
 // ============= 🔓🟢 | Model Tipos Producto =============
 
 model ProductType {
-  name                    String                  @id @db.Char(20)                   // Plato, Bebida    (Capitalized case + trim)
-  description             String?                 @db.VarChar(255)
-  color                   String?                 @db.Char(7)
-  isActive                Boolean                 @default(true) @map("is_active")
-
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  products                Product[]
-
-  @@map("product_types")
+  name                    String                  @id @db.Char(20) @map("prodt_name")                                        // (Min:1, Max:20, Required) [[Capitalized Case + Trim, CORE]] => "Plato, Bebida" || Tipo general del producto
+  description             String?                 @db.VarChar(255) @map("prodt_description")                                // (Nullable, Min:5, Max:255) [[Title Case + Trim]] => "Producto líquido para consumo" || Descripción del tipo
+  color                   String?                 @db.Char(7) @map("prodt_color")                                            // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#3B82F6" || Color visual del tipo
+  isActive                Boolean                 @default(true) @map("prodt_is_active")                                    // (Required) => true || Indica si el tipo está activo
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("prodt_created_at")                  // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("prodt_created_by")                                      // (Min:8, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("prodt_updated_at")                      // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("prodt_updated_by")                                     // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("prodt_deleted_at")                                // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("prodt_deleted_by")                                     // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  products                Product[]                                                                                            // Productos de este tipo
+  
+  @@map("product_types_prodt")
 }
+
 
 
 
 // ============= 🔓🟢 | Model Categorias Producto =============
 
 model ProductCategory {
-  name                    String                  @id @db.Char(20)                  // "Entradas", "Principales", "Postres", "Gaseosas", "Cervezas" (Capitalized case + trim)
-  description             String?                 @db.VarChar(255)                  // (Capitalized case + trim)
-  color                   String?                 @db.Char(7)
-  isActive                Boolean                 @default(true) @map("is_active")
+  name                    String                  @id @db.Char(20) @map("prodc_name")                                        // (Min:1, Max:20, Required) [[Capitalized Case + Trim, CORE]] => "Entradas, Principales, Postres, Gaseosas, Cervezas" || Categoría del producto
+  description             String?                 @db.VarChar(255) @map("prodc_description")                                // (Nullable, Min:5, Max:255) [[Capitalized Case + Trim]] => "Platos para comenzar" || Descripción de la categoría
+  color                   String?                 @db.Char(7) @map("prodc_color")                                            // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#F59E0B" || Color asociado a la categoría
+  isActive                Boolean                 @default(true) @map("prodc_is_active")                                    // (Required) => true || Indica si la categoría está activa
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("prodc_created_at")                  // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("prodc_created_by")                                      // (Min:8, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("prodc_updated_at")                      // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("prodc_updated_by")                                     // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("prodc_deleted_at")                                // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("prodc_deleted_by")                                     // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  products                Product[]                                                                                            // Productos en esta categoría
+  
+  @@map("product_categories_prodc")
+}
 
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
 
-  products          Product[]
 
-  @@map("product_categories")
+
+// ============= 🔒⚫ | Model Estados Producto =============
+
+model ProductStatus {
+  code                    String                  @id @db.Char(20) @map("prost_code")                                        // (Min:3, Max:20, Required) [[Upper Case + Trim, CORE]] => "ACTIVE, INACTIVE, DISCONTINUED, OUT_OF_STOCK" || Código del estado del producto
+  name                    String                  @unique @db.VarChar(50) @map("prost_name")                                // (Min:3, Max:50, Required) [[Title Case + Trim]] => "Activo, Inactivo , Descontinuado, Agotado" || Nombre legible del estado
+  description             String?                 @db.VarChar(255) @map("prost_description")                               // (Nullable, Min:5, Max:255) [[Capitalized Case + Trim]] => "Producto disponible" || Descripción del estado
+  color                   String?                 @db.Char(7) @map("prost_color")                                           // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#10B981" || Color visual del estado
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("prost_created_at")                 // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("prost_created_by")                                     // (Min:8, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("prost_updated_at")                     // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("prost_updated_by")                                    // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  
+  products                Product[]                                                                                            // Productos en este estado
+  
+  @@map("product_statuses_prost")
 }
 
 
 
 // ============= 🔓🟢 | Model Productos =============
-
 model Product {
-  id                      Int                     @id @default(autoincrement())
-  name                    String                  @db.VarChar(100)                        // (Title case + trim)
-  description             String?                 @db.Text                                // (Capitalized case + trim)
-  price                   Decimal                 @db.Decimal(10, 2)
-  offerPrice              Decimal?                @db.Decimal(10, 2) @map("offer_price")
-
-  productTypeName         String                  @db.Char(20) @map("product_type_name")
-  productType             ProductType             @relation(fields: [productTypeName], references: [name])
-
-  productCategoryName     String                  @db.Char(20) @map("product_category_name")
-  productCategory         ProductCategory         @relation(fields: [productCategoryName], references: [name])
-
-  brandName               String?                 @db.Char(20) @map("brand_name")
-  brand                   Brand?                  @relation(fields: [brandName], references: [name])
-
-  productStatusCode       String                  @db.Char(20) @map("product_status_code") @default("ACTIVE")
-  productStatus           ProductStatus           @relation(fields: [productStatusCode], references: [code])
-  mainImageId             Int?                    @map("main_image_id")
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  inventories             Inventory[]
-  orderItems              OrderItem[]
-
-  @@map("products")
+  id                      Int                     @id @default(autoincrement()) @map("prod_id")                             // (Required) [[CORE]] => 1 || Identificador único del producto
+  name                    String                  @db.VarChar(100) @map("prod_name")                                        // (Min:1, Max:100, Required) [[Title Case + Trim]] => "Causa de Pollo" || Nombre del producto
+  description             String?                 @db.VarChar(255) @map("prod_description")                                // (Nullable, Min:5, Max:255) [[Capitalized Case + Trim]] => "Plato típico peruano" || Descripción del producto
+  price                   Decimal                 @db.Decimal(10, 2) @map("prod_price")                                      // (Required, Min:0.01) [[validDecimal]] => 25.50 || Precio base del producto
+  offerPrice              Decimal?                @db.Decimal(10, 2) @map("prod_offer_price")                               // (Nullable, Min:0.01) [[validDecimal]] => 20.00 || Precio en oferta (si aplica)
+  productTypeName         String                  @db.Char(20) @map("prodt_name")                                            // (Min:1, Max:20, Required) [[Trim, CORE]] => "Plato" || Nombre del tipo de producto
+  productType             ProductType             @relation(fields: [productTypeName], references: [name])                    // Relación con el tipo
+  productCategoryName     String                  @db.Char(20) @map("prodc_name")                                            // (Min:1, Max:20, Required) [[Trim, CORE]] => "Principales" || Nombre de la categoría
+  productCategory         ProductCategory         @relation(fields: [productCategoryName], references: [name])                // Relación con la categoría
+  brandName               String?                 @db.Char(20) @map("bran_name")                                            // (Nullable, Min:1, Max:20) [[Trim]] => "Inka Kola" || Marca del producto
+  brand                   Brand?                  @relation(fields: [brandName], references: [name])                         // Relación con la marca
+  productStatusCode       String                  @db.Char(20) @map("prost_code") @default("ACTIVE")                         // (Min:3, Max:20, Required) [[Upper Case + Trim]] => "ACTIVE" || Código del estado actual
+  productStatus           ProductStatus           @relation(fields: [productStatusCode], references: [code])                  // Relación con el estado
+  mainImageId             Int?                    @map("img_imageable_id")                                                   // (Nullable) => 1 || ID de la imagen principal del producto
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("prod_created_at")                  // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("prod_created_by")                                      // (Min:8, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("prod_updated_at")                      // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("prod_updated_by")                                     // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("prod_deleted_at")                                // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("prod_deleted_by")                                     // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  inventory               Inventory?                                                                                         // Inventario asociado
+  orderItems              OrderItem[]                                                                                        // Items de pedidos que lo usan
+  
+  @@map("products_prod")
 }
 
 
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++ Pedidos +++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// ================================================================================
+// 👥 4. GESTIÓN DE USUARIOS (EMPLEADOS)
+// ================================================================================
+
+// ============= 🔓🟢 | Model Tipos Documentos =============
+model DocumentType {
+  name                    String                  @id @db.Char(10) @map("doct_name")                       // (Min:2, Max:10, Required) [[Upper Case + Trim, CORE]] => "DNI, RUC, CE, PASAPORTE" || Tipo de documento: DNI, RUC, CE, etc.
+  description             String?                 @db.VarChar(255) @map("doct_description")                // (Nullable, Min:5, Max:255) [[Title Case + Trim]] => "Documento Nacional de Identidad" || Descripción del tipo de documento
+  digitLength             Int                     @map("doct_digit_length")                                 // (Required, Min:1) [[validPositive]] => 8 || Longitud esperada del número de documento
+  color                   String?                 @db.Char(7) @map("doct_color")                            // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#3B82F6" || Color asociado al tipo
+  isActive                Boolean                 @default(true) @map("doct_is_active")                     // (Required) => true || Indica si el tipo de documento está activo
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("doct_created_at")  // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12)  @map("doct_created_by")                     // (Min:8, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del usuario que creó el registro
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("doct_updated_at")      // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de última actualización
+  updatedBy               String?                 @db.Char(12) @map("doct_updated_by")                     // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del usuario que actualizó el registro
+  deletedAt               DateTime?               @db.Timestamp(0) @map("doct_deleted_at")                // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12)  @map("doct_deleted_by")                    // (Nullable, Min:8, Max:12) [[Trim]] => "123456789012" || Documento del usuario que eliminó el registro
+  
+  users                   User[]                                                                                         // Usuarios asociados a este tipo de documento
+  customers               Customer[]                                                                                     // Clientes asociados a este tipo de documento
+  
+  @@map("document_types_doct")                                
+}
 
 
-// ============= 🔒⚫ | Estado de Orden =============
+
+// [SEMI CORE] ============= 🔒⚫ | Model Estados Cuenta =============
+
+model AccountStatus {
+  code                    String                  @id @db.Char(10) @map("accs_code")             // (Min:5, Max:10, Required) [[Upper Case + Trim, CORE]] => "ACTIVE, INACTIVE, SUSPENDED " || Código del estado de la cuenta
+  name                    String                  @db.VarChar(20) @map("accs_name")              // (Min:3, Max:20, Required) [[Title Case + Trim]] => "Activa, Inactiva, Suspendida" || Nombre legible del estado
+  description             String?                 @db.VarChar(255) @map("accs_description")      // (Nullable, Min:5, Max:255) [[Capitalized Case + Trim]] => "Cuenta activa y usable" || Descripción del estado
+  color                   String?                 @db.Char(7) @map("accs_color")                 // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#10B981" || Color visual del estado
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("accs_created_at") // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12)  @map("accs_created_by")          // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("accs_updated_at") // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("accs_updated_by")           // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  
+  users                   User[]                                                                                         // Usuarios con este estado
+  customers               Customer[]                                                                                     // Clientes con este estado
+  
+  @@map("account_statuses_accs")
+}
+
+
+
+// [SEMI CORE] ============= 🔒⚫ | Model Categorías de Permisos =============
+
+model PermissionCategory {
+  code                    String                  @id @db.Char(40) @map("perc_code")         // (Min:5, Max:40, Required) [[Upper Case + Trim, CORE]] => "user_management, product_management, customer_management, etc" || Código identificador único de la categoría
+  name                    String                  @db.VarChar(50) @map("perc_name")          // (Min:3, Max:50, Required) [[Capitalized Case + Trim]] => "Gestión de Usuarios, Gestión de Productos" || Nombre de la categoría de permisos
+  description             String?                 @db.VarChar(255) @map("perc_description")  // (Nullable, Min:5, Max:255) [[Capitalized Case + Trim]] => "Permisos para gestionar usuarios" || Descripción de la categoría
+  color                   String?                 @db.Char(7) @map("perc_color")             // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#6366F1" || Color asociado a la categoría
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("perc_created_at") // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12)  @map("perc_created_by")      // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("perc_updated_at") // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("perc_updated_by")       // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  
+  permissions             Permission[]                                                                                   // Permisos asociados a esta categoría
+  
+  @@map("permission_categories_perc")
+}
+
+
+
+
+// [CORE] ============= 🔒⚫ | Model Permisos =============
+model Permission {
+  code                    String                       @id @db.Char(40) @map("perm_code")            // (Min:8, Max:40, Required) [[Upper Case + Trim, CORE]] => "view_user, create_user, update_user, delete_user, restore_user" || Código único del permiso
+  name                    String                       @unique @db.VarChar(50) @map("perm_name")     // (Min:3, Max:50, Required) [[Capitalized Case + Trim]] => "Ver Usuarios, Crear Usuarios, Editar Usuarios" || Nombre legible del permiso
+  description             String?                      @db.VarChar(255) @map("perm_description")     // (Nullable, Min:5, Max:255) [[Capitalized Case + Trim]] => "Permite ver la lista de usuarios" || Descripción del permiso
+  permissionCategoryCode  String                       @db.Char(25) @map("perc_code")                // (Min:5, Max:25, Required) [[Trim, CORE]] => "user_management" || Código de la categoría a la que pertenece
+  permissioncategory      PermissionCategory           @relation(fields: [permissionCategoryCode], references: [code]) // Relación con la categoría
+  
+  createdAt               DateTime                     @db.Timestamp(0) @default(now()) @map("perm_created_at") // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                       @db.Char(12)  @map("perm_created_by")        // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  
+  rolePermissions         RolePermission[]                                                                               // Roles que tienen este permiso
+  
+  @@map("permissions_perm")
+}
+
+
+
+// ============= 🔓🟢 | Model Roles =============
+model Role {
+  name                    String                  @id @db.Char(20) @map("rol_name")               // (Min:3, Max:20, Required) [[Capitalized Case + Trim, CORE]] => "Admin, Super admin, Chef, Mozo, Cajero, Barra " || Nombre del rol del usuario
+  description             String?                 @db.VarChar(255) @map("rol_description")        // (Nullable, Min:5, Max:255) [[Title Case + Trim]] => "Acceso total al sistema" || Descripción del rol
+  color                   String?                 @db.Char(7) @map("rol_color")                   // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#EF4444" || Color visual del rol
+  isActive                Boolean                 @default(true) @map("rol_is_active")            // (Required) => true || Indica si el rol está activo
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("rol_created_at") // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12)  @map("rol_created_by")            // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("rol_updated_at") // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("rol_updated_by")             // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("rol_deleted_at")        // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12)  @map("rol_deleted_by")            // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  permissions             RolePermission[]                                                                               // Permisos asignados al rol
+  users                   User[]                                                                                         // Usuarios con este rol
+  
+  @@map("roles_rol")
+}
+
+
+
+// ============= 🔓🟢 | Model Role Permission =============
+model RolePermission {
+  id                           Int                    @id @default(autoincrement()) @map("rolp_id") // (Required) [[CORE]] => 1 || Identificador único del permiso asignado a un rol
+  roleName                     String                 @db.Char(20) @map("rol_name")                  // (Min:3, Max:20, Required) [[Trim, CORE]] => "Admin" || Nombre del rol
+  role                         Role                   @relation(fields: [roleName], references: [name]) // Relación con el rol
+  permissionCode               String                 @db.Char(40) @map("perm_code")                 // (Min:8, Max:40, Required) [[Trim, CORE]] => "create_user" || Código del permiso
+  permission                   Permission             @relation(fields: [permissionCode], references: [code]) // Relación con el permiso
+  
+  createdAt                    DateTime               @db.Timestamp(0) @default(now()) @map("rolp_created_at") // (Required) => "2025-04-05T10:00:00Z" || Fecha de asignación
+  createdBy                    String                 @db.Char(12)  @map("rolp_created_by")         // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del usuario que asignó
+  
+  @@unique([roleName, permissionCode])                                                                                   // Único por combinación rol-permiso
+  @@map("role_permissions_rolp")
+}
+
+
+
+// ============= 🔓🟢 | Model Usuarios (Empleados) =============
+model User {
+  document                    String                  @id @db.Char(12) @map("user_document")          // (Min:8, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento de identidad del empleado
+  username                    String                  @unique @db.VarChar(30) @map("user_username")   // (Min:3, Max:30, Required) [[Trim]] => "jlopez" || Nombre de usuario único
+  email                       String                  @unique @db.VarChar(50) @map("user_email")      // (Min:5, Max:50, Required) [[validEmail, Lower Case + Trim]] => "juan.lopez@empresa.com" || Correo del empleado
+  password                    String                  @db.VarChar(255) @map("user_password")          // (Min:8, Required) [[Trim]] => "hashed_password_abc123" || Contraseña cifrada del usuario
+  pin                         String?                 @db.VarChar(255) @map("user_pin")               // (Nullable, Min:4) [[Trim]] => "5678" || PIN de acceso rápido (cifrado)
+  documentTypeName            String                  @db.Char(10) @map("doct_name")                  // (Min:2, Max:10, Required) [[Trim, CORE]] => "DNI" || Tipo de documento del usuario
+  documentType                DocumentType            @relation(fields: [documentTypeName], references: [name]) // Relación con tipo de documento
+  roleName                    String                  @db.Char(20) @map("rol_name")                   // (Min:3, Max:20, Required) [[Trim, CORE]] => "Mozo" || Nombre del rol asignado
+  role                        Role                    @relation(fields: [roleName], references: [name]) // Relación con el rol
+  accountStatusCode           String                  @db.Char(10) @map("accs_code") @default("ACTIVE") // (Min:5, Max:10, Required) [[Upper Case + Trim]] => "ACTIVE" || Estado actual de la cuenta
+  accountStatus               AccountStatus           @relation(fields: [accountStatusCode], references: [code]) // Relación con estado de cuenta
+  
+  createdAt                   DateTime                @db.Timestamp(0) @default(now()) @map("user_created_at") // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy                   String                  @db.Char(12)  @map("user_created_by")           // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt                   DateTime?               @db.Timestamp(0) @updatedAt @map("user_updated_at") // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy                   String?                 @db.Char(12) @map("user_updated_by")           // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt                   DateTime?               @db.Timestamp(0) @map("user_deleted_at")      // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy                   String?                 @db.Char(12)  @map("user_deleted_by")          // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  // Relaciones corregidas
+  createdThemes               Theme[]                                                                                            // Temas creados por este usuario
+  combinedTables              CombineTable[]          @relation("UserTableCombiner")                                               // Mesas que este usuario combinó
+  releasedTables              CombineTable[]          @relation("UserTableReleaser")                                               // Mesas que este usuario liberó
+  userProfile                 userProfile?                                                                                       // Perfil asociado al usuario
+  commandOpener               Command[]               @relation("UserCommandOpener")                                               // Comandas abiertas por este usuario
+  commandCloser               Command[]               @relation("UserCommandCloser")                                               // Comandas cerradas por este usuario
+  orderCreator                Order[]                 @relation("UserOrderCreator")                                                // Órdenes creadas por este usuario
+  orderCloser                 Order[]                 @relation("UserOrderCloser")                                                 // Órdenes cerradas por este usuario
+  openedCashBoxes             CashBox[]               @relation("UserCashBoxOpener")                                               // Cajas abiertas por este usuario
+  closedCashBoxes             CashBox[]               @relation("UserCashBoxCloser")                                               // Cajas cerradas por este usuario
+  cashBoxMovements            CashBoxMovement[]                                                                                  // Movimientos de caja realizados
+  paymentsReceived            Payment[]               @relation("PaymentsReceived")                                                // Pagos recibidos por este usuario
+  inventoryMovements          InventoryMovement[]                                                                                // Movimientos de inventario realizados
+  sessions                    Session[]                                                                                          // Sesiones del usuario
+  logs                        Log[]                                                                                              // Registros de auditoría generados
+  
+  @@index([username])
+  @@index([document])
+  @@index([email])
+  @@index([accountStatusCode])
+  @@index([email, accountStatusCode])
+  @@map("users_user")
+}
+
+
+
+// 🔓🟢 | User Profile (Perfil de Usuario) =============
+
+model userProfile {
+  id                        Int               @id @default(autoincrement()) @map("userp_id")                // (Min:1) [] => 1
+  userDocument              String            @unique @db.Char(12) @map("user_document")                    // (Min:8, Max:12) [Número / Documento] => "12345678"
+  user                      User              @relation(fields: [userDocument], references: [document])
+  fullName                  String            @db.VarChar(100) @map("userp_full_name")                      // (Min:5, Max:100) [Title Case + Trim] => "Ronny Tito"
+  phoneNumber               String?           @unique @db.VarChar(15) @map("userp_phone_number")            // (Nullable, Min:9, Max:15) [Digits Only + Trim] => "987654321"
+  birthDate                 DateTime?         @map("userp_birth_date")                                      // (Nullable) [] => "1990-05-12"
+  hireDate                  DateTime?         @map("userp_hire_date")                                       // (Nullable) [] => "2023-03-01"
+  salary                    Decimal?          @db.Decimal(10, 2) @map("userp_salary")                       // (Nullable, Min:0, Max:99999999.99) [] => 3500.50
+  emergencyContactName      String?           @db.VarChar(25) @map("userp_emergency_contact_name")          // (Nullable, Min:3, Max:25) [Title Case + Trim] => "Ana Perez"
+  emergencyContactPhone     String?           @db.VarChar(15) @map("userp_emergency_contact_phone")         // (Nullable, Min:6, Max:15) [Digits Only + Trim] => "987654321"
+  themeName                 String?           @db.Char(20) @map("them_name")                                // (Nullable, Min:3, Max:20) [Capitalized Case + Trim] => "Mi Temita"
+  theme                     Theme?            @relation(fields: [themeName], references: [name])
+
+  createdAt                 DateTime          @db.Timestamp(0) @default(now()) @map("userp_created_at")     // [] [] => "2025-08-23 20:15:00"
+  createdBy                 String            @db.Char(12) @map("userp_created_by")                         // (Min:1, Max:12) [Documento] => "12345678"
+  updatedAt                 DateTime?         @db.Timestamp(0) @updatedAt @map("userp_updated_at")          // (Nullable) [] => "2025-08-24 10:00:00"
+  updatedBy                 String?           @db.Char(12) @map("userp_updated_by")                         // (Nullable, Min:1, Max:12) [Documento] => "87654321"
+  deletedAt                 DateTime?         @db.Timestamp(0) @map("userp_deleted_at")                     // (Nullable) [] => "2025-08-25 15:00:00"
+  deletedBy                 String?           @db.Char(12) @map("userp_deleted_by")                         // (Nullable, Min:1, Max:12) [Documento] => "87654321"
+
+  @@map("user_profile_userp")
+}
+
+
+
+
+
+// ================================================================================
+// 🧑 5. GESTIÓN DE CLIENTES
+// ================================================================================
+
+// ============= 🔓🟢 | Model Clientes =============
+
+model Customer {
+  document                String                  @id @db.Char(12) @map("cust_document")               // (Min:8, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento de identidad del cliente
+  username                String?                 @unique @db.VarChar(30) @map("cust_username")        // (Nullable, Min:3, Max:30) [[Trim]] => "mlopez" || Nombre de usuario del cliente
+  email                   String?                 @unique @db.VarChar(50) @map("cust_email")           // (Nullable, Min:5, Max:50) [[validEmail, Lower Case + Trim]] => "maria.lopez@cliente.com" || Correo electrónico del cliente
+  password                String?                 @db.VarChar(255) @map("cust_password")               // (Nullable, Min:8) [[Trim]] => "hashed_password_xyz" || Contraseña cifrada del cliente
+  documentTypeName        String                  @db.Char(10)  @map("doct_name")                      // (Min:2, Max:10, Required) [[Trim, CORE]] => "DNI" || Tipo de documento del cliente
+  documentType            DocumentType            @relation(fields: [documentTypeName], references: [name]) // Relación con tipo de documento
+  accountStatusCode       String                  @db.Char(10) @map("accs_code") @default("ACTIVE")    // (Min:5, Max:10, Required) [[Upper Case + Trim]] => "ACTIVE" || Estado de la cuenta del cliente
+  accountStatus           AccountStatus           @relation(fields: [accountStatusCode], references: [code]) // Relación con estado de cuenta
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at") // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación del registro
+  createdBy               String                  @db.Char(12)  @map("created_by")                    // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del usuario que registró al cliente
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")      // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de última actualización
+  updatedBy               String?                 @db.Char(12) @map("updated_by")                     // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del usuario que actualizó el registro
+  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")                // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12)  @map("deleted_by")                    // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del usuario que eliminó el registro
+  
+  profile                 CustomerProfile?                                                                                       // Perfil asociado al cliente
+  orders                  Order[]                                                                                                // Órdenes realizadas por el cliente
+  payments                Payment[]                                                                                              // Pagos realizados por el cliente
+  sessions                Session[]                                                                                              // Sesiones del cliente
+  logs                    Log[]                                                                                                  // Registros de auditoría del cliente
+  
+  @@index([document])
+  @@index([email])
+  @@index([accountStatusCode])
+  @@index([username])
+  @@map("customers_cust")
+}
+
+
+
+// ============= 🔓🟢 | Model Customer Profile =============
+
+model CustomerProfile {
+  id                              Int               @id @default(autoincrement()) @map("custp_id")                              // (Required) [[CORE]] => 1 || Identificador único del perfil del cliente
+  customerDocument                String            @unique @db.Char(12) @map("cust_document")                                  // (Min:8, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del cliente asociado
+  customer                        Customer          @relation(fields: [customerDocument], references: [document])                // Relación con el cliente
+  fullName                        String            @db.VarChar(100) @map("custp_full_name")                                    // (Min:2, Max:100, Required) [[Title Case + Trim]] => "María López" || Nombre completo del cliente
+  phoneNumber                     String?           @unique @db.VarChar(15) @map("custp_phone_number")                          // (Nullable, Min:6, Max:15) [[Trim]] => "+51987654321" || Número de contacto del cliente
+  birthDate                       DateTime?         @map("custp_birth_date")                                                    // (Nullable) => "1990-05-15T00:00:00Z" || Fecha de nacimiento del cliente
+  themeName                       String?           @db.Char(20) @map("them_name")                                              // (Nullable, Min:1, Max:20) [[Trim]] => "Tema Claro" || Nombre del tema preferido
+  theme                           Theme?            @relation(fields: [themeName], references: [name])                           // Relación con tema preferido
+  
+  createdAt                       DateTime          @db.Timestamp(0) @default(now())  @map("custp_created_at")                  // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación del perfil
+  createdBy                       String            @db.Char(12) @map("custp_created_by")                                       // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt                       DateTime?         @db.Timestamp(0) @updatedAt @map("custp_updated_at")                        // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy                       String?           @db.Char(12) @map("custp_updated_by")                                       // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt                       DateTime?         @db.Timestamp(0) @map("custp_deleted_at")                                  // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy                       String?           @db.Char(12) @map("custp_deleted_by")                                       // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  @@map("customer_profile_custp")
+}
+
+
+
+
+// ================================================================================
+// 📋 6. PEDIDOS Y COMANDAS
+// ================================================================================
+
+
+// ============= 🔓🟢 | Model Estados de Comanda =============
+
+model CommandStatus {
+  code                    String                  @id @db.Char(12) @map("comms_code")                 // (Min:3, Max:12, Required) [[Upper Case + Trim, CORE]] => "OPEN, CLOSED, ANNULLED" || Código del estado de la comanda
+  name                    String                  @unique @db.VarChar(20) @map("comms_name")          // (Min:3, Max:20, Required) [[Capitalized Case + Trim]] => "Abierta, Cerrada, Anulada" || Nombre legible del estado
+  description             String?                 @db.VarChar(255) @map("comms_description")         // (Nullable, Min:5, Max:255) [[Capitalized Case + Trim]] => "Comanda en uso" || Descripción del estado
+  color                   String?                 @db.Char(7) @map("comms_color")                     // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#3B82F6" || Color visual del estado
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("comms_created_at") // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("comms_created_by")               // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("comms_updated_at") // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("comms_updated_by")               // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  
+  commands                Command[]                                                                                             // Comandas con este estado
+  
+  @@map("command_statuses_comms")
+}
+
+
+// ============= 🔓🟢 | Model Comanda =============
+model Command {
+  id                      Int                     @id @default(autoincrement()) @map("comm_id")                                // (Required) [[CORE]] => 1 || Identificador único de la comanda
+  tableId                 Int?                    @map("table_id")                                                             // (Nullable) => 5 || ID de la mesa asociada
+  table                   Table?                  @relation(fields: [tableId], references: [id])                                // Relación con mesa
+  combineTableId          Int?                    @map("combt_id")                                                             // (Nullable) => 1 || ID del grupo de mesas combinadas
+  combineTable            CombineTable?           @relation(fields: [combineTableId], references: [id])                         // Relación con grupo de mesas
+  userDocumentOpener      String                  @db.Char(12) @map("user_document_opener")                                   // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del usuario que abrió la comanda
+  opener                  User                    @relation("UserCommandOpener", fields: [userDocumentOpener], references: [document]) // Relación con usuario abridor
+  openedAt                DateTime                @db.Timestamp(0) @default(now()) @map("comm_opened_at")                      // (Required) => "2025-04-05T10:00:00Z" || Fecha de apertura
+  commandStatusCode       String                  @db.Char(12) @map("comms_code")                                              // (Min:3, Max:12, Required) [[Upper Case + Trim]] => "OPEN" || Estado actual de la comanda
+  commandStatus           CommandStatus           @relation(fields: [commandStatusCode], references: [code])                    // Relación con estado
+  notes                   String?                 @db.VarChar(255) @map("comms_notes")                                        // (Nullable, Min:1, Max:255) [[Trim]] => "Cliente espera postre" || Notas adicionales
+  userDocumentCloser      String?                 @db.Char(12) @map("user_document_closer")                                  // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del usuario que cerró
+  closer                  User?                   @relation("UserCommandCloser", fields: [userDocumentCloser], references: [document]) // Relación con usuario cerrador
+  closedAt                DateTime?               @db.Timestamp(0) @map("comm_closed_at")                                     // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de cierre
+  
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("comm_updated_at")                         // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("comm_updated_by")                                        // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("comm_deleted_at")                                   // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("comm_deleted_by")                                        // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del eliminador
+  
+  orders                  Order[]                                                                                               // Órdenes asociadas
+  orderItems              OrderItem[]                                                                                           // Items de pedidos en esta comanda
+  
+  @@map("commands_comm")
+}
+
+
+
+// ============= 🔒⚫ | Estados de Orden =============
 
 model OrderStatus {
-  code                    String                  @id @db.Char(20)          // OPEN, IN_PROGRESS, SERVED, ACCOUNT_REQUESTED, PAID, ANNULLED   (Upper case + trim)
-  name                    String                  @unique @db.VarChar(50)   // Abierta, En Proceso, Servida, Cuenta Solicitada, Pagada, Anulada  ...   (Capitalized case + trim)
-  description             String?                 @db.VarChar(255)          // (Title case + trim)
-  color                   String?                 @db.Char(7)
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-
-  orders                  Order[]
-
-  @@map("order_statuses")
+  code                    String                  @id @db.Char(20) @map("ords_code")          // (Min:3, Max:20, Required) [[Upper Case + Trim, CORE]] => "OPEN" || Código del estado del pedido
+  name                    String                  @unique @db.VarChar(50) @map("ords_name")   // (Min:3, Max:50, Required) [[Capitalized Case + Trim]] => "Abierta" || Nombre legible del estado
+  description             String?                 @db.VarChar(255) @map("ords_description")   // (Nullable, Min:5, Max:255) [[Title Case + Trim]] => "Orden recién creada" || Descripción del estado
+  color                   String?                 @db.Char(7) @map("ords_color")             // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#3B82F6" || Color visual del estado
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("ords_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("ords_created_by")       // (Min:8, Max:12, Required) [[Upper Case + Trim]] => "12345678" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("ords_updated_at") // (Nullable) [] => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("ords_updated_by")       // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del actualizador
+  orders                  Order[]                                                                                          // (Relation) [] => Order || Órdenes con este estado
+  @@map("order_statuses_ords")                                                                                             // (Database table mapping) [] => order_statuses_ords || Tabla física
 }
-
-
 
 // ============= 🔒⚫ | Estado de Items de Pedido =============
 
 model OrderItemStatus {
-  code                    String                  @id @db.Char(20)          // PENDING, IN_PREPARATION, READY, DELIVERED, ANULLED
-  name                    String                  @unique @db.VarChar(50)   // Pendiente, En Preparacion, Listo, Entregado, Anulado ...     (Capitalized case + trim)
-  description             String?                 @db.VarChar(255)
-  color                   String?                 @db.Char(7)
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-
-  orderItems              OrderItem[]
-
-  @@map("order_item_statuses")
+  code                    String                  @id @db.Char(20) @map("ordis_code")          // (Min:3, Max:20, Required) [[Upper Case + Trim, CORE]] => "PENDING" || Código del estado del ítem
+  name                    String                  @unique @db.VarChar(50) @map("ordis_name")   // (Min:3, Max:50, Required) [[Capitalized Case + Trim]] => "Pendiente" || Nombre legible del estado
+  description             String?                 @db.VarChar(255) @map("ordis_description")   // (Nullable, Min:5, Max:255) [[Capitalized Case + Trim]] => "Producto en espera de preparación" || Descripción del estado
+  color                   String?                 @db.Char(7) @map("ordis_color")             // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#F59E0B" || Color visual del estado
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("ordis_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("ordis_created_by")       // (Min:8, Max:12, Required) [[Upper Case + Trim]] => "12345678" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("ordis_updated_at") // (Nullable) [] => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("ordis_updated_by")       // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del actualizador
+  orderItems              OrderItem[]                                                                                      // (Relation) [] => OrderItem || Ítems en este estado
+  @@map("order_item_statuses_ordis")                                                                                       // (Database table mapping) [] => order_item_statuses_ordis || Tabla física
 }
-
 
 
 // ============= 🔓🟢 | Model Orden =============
 
 model Order {
-  code                    String                  @id @db.Char(20)                // ORD-20250813-0001
-  tableSessionId          Int?                    @map("table_session_id")
-  tableSession            TableSession?           @relation(fields: [tableSessionId], references: [id])
+  code                    String                  @id @db.Char(20) @map("ord_code")                // (Min:1, Max:20, Required) [[Upper Case + Trim, CORE]] => "ORD-20250813-0001" || Código único de la orden
+  commandId               Int                     @map("comm_id")                                  // (Min:1, Required) [] => 1 || ID de la comanda asociada
+  command                 Command                 @relation(fields: [commandId], references: [id]) // (Relation) [] => Command || Relación con la comanda
+  userDocumentCreator     String                  @db.Char(12) @map("user_document_creator")      // (Min:8, Max:12, Required) [[Upper Case + Trim]] => "12345678" || Documento del usuario que creó la orden
+  creator                 User                    @relation("UserOrderCreator", fields: [userDocumentCreator], references: [document]) // (Relation) [] => User || Usuario creador
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("ord_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  customerDocument        String                  @db.Char(12) @map("cust_document")              // (Min:8, Max:12, Required) [[Upper Case + Trim]] => "87654321" || Documento del cliente
+  customer                Customer                @relation(fields: [customerDocument], references: [document]) // (Relation) [] => Customer || Cliente asociado
+  subtotal                Decimal                 @db.Decimal(10, 2) @map("ord_subtotal")          // (Min:0.01, Required) [[validDecimal]] => 45.00 || Subtotal antes de impuestos y descuentos
+  discount                Decimal                 @db.Decimal(10, 2) @default(0.00) @map("ord_discount") // (Min:0.00) [[validDecimal]] => 5.00 || Monto total de descuento aplicado
+  taxAmount               Decimal                 @db.Decimal(10, 2) @default(0.00) @map("ord_tax_amount") // (Min:0.00) [[validDecimal]] => 7.20 || Monto del impuesto calculado
+  totalAmount             Decimal                 @db.Decimal(10, 2) @default(0.00) @map("ord_total_amount") // (Min:0.01, Required) [[validDecimal]] => 47.20 || Total final de la orden
+  orderStatusCode         String                  @db.Char(20) @map("ords_code")                  // (Min:3, Max:20, Required) [[Upper Case + Trim]] => "OPEN" || Código del estado actual
+  orderStatus             OrderStatus             @relation(fields: [orderStatusCode], references: [code]) // (Relation) [] => OrderStatus || Estado de la orden
+  userDocumentCloser      String?                 @db.Char(12) @map("user_document_closer")      // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del usuario que cerró la orden
+  closer                  User?                   @relation("UserOrderCloser", fields: [userDocumentCloser], references: [document]) // (Relation) [] => User || Usuario que cerró la orden
+  closedAt                DateTime?               @db.Timestamp(0) @map("ord_closed_at")         // (Nullable) [] => "2025-04-05T11:30:00Z" || Fecha de cierre de la orden
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("ord_updated_at") // (Nullable) [] => "2025-04-05T11:00:00Z" || Fecha de última actualización
+  updatedBy               String?                 @db.Char(12) @map("ord_updated_by")            // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("ord_deleted_at")        // (Nullable) [] => "2025-04-05T12:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("ord_deleted_by")            // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "12345678" || Documento del eliminador
+  orderItems              OrderItem[]                                                                                      // (Relation) [] => OrderItem || Ítems de la orden
+  payment                 Payment?                                                                                         // (Relation) [] => Payment || Pago asociado
   
-  creatorUserDocument     String                  @db.Char(12) @map("creator_user_document")
-  creator                 User                    @relation("OrderCreator", fields: [creatorUserDocument], references: [documentNumber])
-  createdAt               DateTime?               @db.Timestamp(0) @default(now()) @map("created_at")
-
-  customerDocumentNumber  String                  @db.Char(12) @map("customer_document_number")
-  customer                Customer                @relation(fields: [customerDocumentNumber], references: [documentNumber])
-
-  subtotalAmount          Decimal                 @db.Decimal(10, 2) @default(0) @map("subtotal_amount") // sin impuesto
-  taxAmount               Decimal                 @db.Decimal(10, 2) @default(0) @map("tax_amount")      // Monto impuesto
-  totalAmount             Decimal                 @db.Decimal(10, 2) @default(0) @map("total_amount")    // ya incluye impuesto
-
-  statusCode              String                  @db.Char(20) @map("status_code")
-  status                  OrderStatus             @relation(fields: [statusCode], references: [code])
-
-  closerUserDocument      String?                 @db.Char(12) @map("closed_user_document")
-  closer                  User?                   @relation("OrderCloser", fields: [closerUserDocument], references: [documentNumber])
-  closedAt                DateTime?               @db.Timestamp(0) @map("closed_at")
-
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")  
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")   
-
-  orderItems              OrderItem[]
-  payment                 Payment?
-
-  @@index([code])
-  @@index([statusCode])
-  @@index([tableSessionId])
-  @@index([creatorUserDocument])
-  @@index([closerUserDocument])
-
-  @@map("orders")
+  @@index([code])                                                                                                          // (Index) [] => ord_code || Búsqueda por código
+  @@index([orderStatusCode])                                                                                               // (Index) [] => ords_code || Búsqueda por estado
+  @@index([userDocumentCreator])                                                                                           // (Index) [] => user_document_creator || Búsqueda por creador
+  @@index([userDocumentCloser])                                                                                            // (Index) [] => user_document_closer || Búsqueda por cerrador
+  
+  @@map("orders_ord")                                                                                                       // (Database table mapping) [] => orders_ord || Tabla física
 }
-
-
 
 // ============= 🔓🟢 | Model Items de Orden =============
 
 model OrderItem {
-  id                      Int                     @id @default(autoincrement())
-  orderCode               String                  @db.Char(20) @map("order_code")
-  order                   Order                   @relation(fields: [orderCode], references: [code])
-  productId               Int                     @map("product_id")
-  product                 Product                 @relation(fields: [productId], references: [id])
-
-  quantity                Int   
-  unitPrice               Decimal                 @db.Decimal(10, 2) @map("unit_price")
-  subTotal                Decimal                 @db.Decimal(10, 2) @map("sub_total")
-  discount                Decimal                 @db.Decimal(10, 2) @default(0.00)
-
-  statusCode              String                  @db.Char(20) @map("status_code") @default("PENDIENTE")
-  status                  OrderItemStatus         @relation(fields: [statusCode], references: [code])
-  specialInstructions     String?                 @db.VarChar(255) @map("special_instructions")
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")  
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-
-  @@index([orderCode])
-  @@index([productId])
-  @@index([statusCode])
-  @@index([orderCode, statusCode])
-
-  @@map("order_items")
+  id                      Int                     @id @default(autoincrement()) @map("ordit_id") // (Min:1, Required) [[CORE]] => 1 || Identificador único del ítem
+  commandId               Int                     @map("comm_id")                                  // (Min:1, Required) [] => 3 || ID de la comanda
+  command                 Command                 @relation(fields: [commandId], references: [id]) // (Relation) [] => Command || Relación con la comanda
+  orderCode               String?                 @db.Char(20) @map("ord_code")                   // (Nullable, Min:1, Max:20) [[Upper Case + Trim]] => "ORD-20250813-0001" || Código de la orden asociada
+  order                   Order?                  @relation(fields: [orderCode], references: [code]) // (Relation) [] => Order || Relación con la orden
+  productId               Int                     @map("prod_id")                                  // (Min:1, Required) [] => 5 || ID del producto
+  product                 Product                 @relation(fields: [productId], references: [id]) // (Relation) [] => Product || Producto asociado
+  orderItemStatusCode     String                  @db.Char(20) @map("ordis_code") @default("PENDIENTE") // (Min:3, Max:20, Required) [[Upper Case + Trim]] => "PENDING" || Código del estado
+  orderItemStatus         OrderItemStatus         @relation(fields: [orderItemStatusCode], references: [code]) // (Relation) [] => OrderItemStatus || Estado del ítem
+  quantity                Int                     @default(1) @map("ordit_quantity")              // (Min:1, Required) [[validPositive]] => 2 || Cantidad solicitada
+  specialInstructions     String?                 @db.VarChar(255) @map("ordit_special_instructions") // (Nullable, Min:3, Max:255) [[Capitalized Case + Trim]] => "Sin cebolla" || Instrucciones especiales
+  unitPrice               Decimal                 @db.Decimal(10, 2) @map("ordit_unit_price")      // (Min:0.01, Required) [[validDecimal]] => 12.50 || Precio unitario al momento del pedido
+  discount                Decimal                 @db.Decimal(10, 2) @default(0.00) @map("ordit_discount") // (Min:0.00) [[validDecimal]] => 0.00 || Descuento aplicado al ítem
+  totalPrice              Decimal                 @db.Decimal(10, 2) @map("ordit_total_price")     // (Min:0.01, Required) [[validDecimal]] => 25.00 || Total = (unitPrice * quantity) - discount
+  notes                   String?                 @db.VarChar(255) @map("ordit_notes")           // (Nullable, Min:3, Max:255) [[Capitalized Case + Trim]] => "Para llevar" || Notas adicionales
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("ordit_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("ordit_created_by")           // (Min:8, Max:12, Required) [[Upper Case + Trim]] => "12345678" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("ordit_updated_at") // (Nullable) [] => "2025-04-05T10:30:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("ordit_updated_by")           // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("ordit_deleted_at")       // (Nullable) [] => "2025-04-05T11:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("ordit_deleted_by")           // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "12345678" || Documento del eliminador
+  @@index([orderCode])                                                                                                       // (Index) [] => ord_code || Búsqueda por orden
+  @@index([productId])                                                                                                       // (Index) [] => prod_id || Búsqueda por producto
+  @@index([orderItemStatusCode])                                                                                             // (Index) [] => ordis_code || Búsqueda por estado
+  @@map("order_items_ordit")                                                                                                 // (Database table mapping) [] => order_items_ordit || Tabla física
 }
+
+
+// ================================================================================
+// 💰 7. PAGOS Y CAJA
+// ================================================================================
+
+
+// ============= 🔓🟢 | Model Caja =============
+
+model CashBox {
+  id                      Int                     @id @default(autoincrement()) @map("cashb_id")                            // (Required) [[CORE]] => 1 || Identificador único de la caja
+  userDocumentOpened      String                  @db.Char(12) @map("user_document_opened")                                 // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del usuario que abrió la caja
+  opened                  User                    @relation("UserCashBoxOpener", fields: [userDocumentOpened], references: [document]) // Relación con el usuario que abrió
+  openedAt                DateTime                @db.Timestamp(0) @default(now()) @map("cashb_opened_at")                   // (Required) => "2025-04-05T10:00:00Z" || Fecha y hora de apertura de la caja
+  initialAmount           Decimal                 @db.Decimal(10, 2) @map("cashb_initial_amount")                            // (Required, Min:0.00) [[validDecimal]] => 100.00 || Monto inicial con el que se abre la caja
+  userDocumentClosed      String?                 @db.Char(12) @map("user_document_closed")                                 // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del usuario que cerró la caja
+  closed                  User?                   @relation("UserCashBoxCloser", fields: [userDocumentClosed], references: [document]) // Relación con el usuario que cerró
+  closedAt                DateTime?               @db.Timestamp(0) @map("cashb_closed_at")                                 // (Nullable) => "2025-04-05T10:00:00Z" || Fecha y hora de cierre de la caja
+  finalAmount             Decimal?                @db.Decimal(10, 2) @map("cashb_final_amount")                             // (Nullable, Min:0.00) [[validDecimal]] => 350.75 || Monto final registrado al cerrar
+  totalSales              Decimal?                @db.Decimal(10, 2) @map("cashb_total_sales")                              // (Nullable, Min:0.00) [[validDecimal]] => 250.75 || Total de ventas realizadas durante la apertura
+  notes                   String?                 @db.VarChar(255)  @map("cashb_notes")                                    // (Nullable, Min:1, Max:255) [[Trim]] => "Caja cerrada sin inconvenientes" || Notas adicionales sobre la apertura/cierre
+  
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("cashb_updated_at")                     // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de última actualización
+  updatedBy               String?                 @db.Char(12) @map("cashb_updated_by")                                    // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del usuario que actualizó
+  
+  cashboxMovements        CashBoxMovement[]                                                                                    // Movimientos registrados en esta caja
+  payments                Payment[]                                                                                          // Pagos registrados en esta caja
+  
+  @@index([userDocumentOpened])
+  @@index([userDocumentClosed])
+  @@map("cash_boxes_cashb")
+}
+
+
+
+// ============= 🔓🟢 | Model Tipo de Movimiento Caja =============
+
+model CashBoxMovementType {
+  code                    String                  @id @db.Char(20) @map("cashmt_code")                                       // (Min:3, Max:20, Required) [[Upper Case + Trim, CORE]] => "SALE, PURCHASE, WITHDRAWAL, DEPOSIT, OPENING, CLOSING, OTHER_INPUT, OTHER_OUTPUT" || Código del tipo de movimiento
+  name                    String                  @unique @db.Char(20) @map("cashmt_name")                                  // (Min:3, Max:20, Required) [[Capitalized Case + Trim]] => "Venta, Compra, Retiro, Deposito, Apertura, Cierre, Otra Entrada, Otra Salida" || Nombre legible del tipo de movimiento
+  description             String?                 @db.VarChar(255) @map("cashmt_description")                              // (Nullable, Min:5, Max:255) [[Title Case + Trim]] => "Ingreso por venta de productos" || Descripción detallada
+  color                   String?                 @db.Char(7) @map("cashmt_color")                                          // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#10B981" || Color visual del tipo
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("cashmt_created_at")                // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("cashmt_created_by")                                   // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("cashmt_updated_at")                    // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("cashmt_updated_by")                                   // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  
+  cashBoxMovement         CashBoxMovement[]                                                                                    // Movimientos asociados a este tipo
+  
+  @@map("cashbox_movement_types_cashmt")
+}
+
+
+
+// ============= 🔓🟢 | Model Movimiento Caja =============
+model CashBoxMovement {
+  id                      Int                     @id @default(autoincrement()) @map("cashm_id")                            // (Required) [[CORE]] => 1 || Identificador único del movimiento
+  cashboxId               Int                     @map("cashb_id")                                                           // (Required) [[CORE]] => 1 || ID de la caja afectada
+  cashbox                 CashBox                 @relation(fields: [cashboxId], references: [id])                            // Relación con la caja
+  userDocument            String                  @db.Char(12) @map("user_document")                                        // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del usuario que realizó el movimiento
+  user                    User                    @relation(fields: [userDocument], references: [document])                  // Relación con el usuario
+  cashboxMovementTypeCode String                  @db.Char(20) @map("cashmt_code")                                          // (Min:3, Max:20, Required) [[Upper Case + Trim]] => "WITHDRAWAL" || Tipo de movimiento
+  cashboxMovementType     CashBoxMovementType     @relation(fields: [cashboxMovementTypeCode], references: [code])          // Relación con el tipo de movimiento
+  amount                  Decimal                 @db.Decimal(10, 2) @map("cashbm_amount")                                  // (Required, Min:0.01) [[validDecimal]] => 50.00 || Monto del movimiento (positivo o negativo según tipo)
+  concept                 String?                 @db.VarChar(255) @map("cashm_concept")                                   // (Nullable, Min:1, Max:255) [[Trim]] => "Retiro para gastos" || Concepto del movimiento
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("cashm_created_at")                // (Required) => "2025-04-05T10:00:00Z" || Fecha de creación del movimiento
+  createdBy               String                  @db.Char(12) @map("cashm_created_by")                                     // (Min:12, Max:12, Required) [[Trim, CORE]] => "123456789012" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("cashm_updated_at")                     // (Nullable) => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("cashm_updated_by")                                    // (Nullable, Min:12, Max:12) [[Trim]] => "123456789012" || Documento del actualizador
+  
+  @@map("cashbox_movement_cashm")
+}
+
 
 
 
 // ============= 🔓🟢 | Model Métodos de Pago =============
 
 model PaymentMethod {
-  name                    String                  @id @db.Char(25)    // "Efectivo", "Yape", "Plin", "Transferencia Bancaria", "Visa"   (Capitalized case + trim)
-  description             String?                 @db.VarChar(255)    // (Title case + trim)
-  color                   String?                 @db.Char(7)
-  isActive                Boolean                 @default(true) @map("is_active")
-
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")  
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")  
-
-  payments                Payment[]
-
-  @@map("payment_methods")
+  name                    String                  @id @db.Char(25) @map("paymet_name")           // (Min:3, Max:25, Required) [[Capitalized Case + Trim, CORE]] => "Efectivo, Yape, Plin, Transferencia Bancaria, Visa" || Nombre del método de pago
+  description             String?                 @db.VarChar(255) @map("paymet_description")    // (Nullable, Min:5, Max:255) [[Title Case + Trim]] => "Pago en efectivo" || Descripción del método
+  color                   String?                 @db.Char(7) @map("paymet_color")               // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#EF4444" || Color visual
+  isActive                Boolean                 @default(true) @map("paymet_is_active")        // (Required) [] => true || Indica si el método está activo
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("paymet_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("paymet_created_by")         // (Min:8, Max:12, Required) [[Upper Case + Trim]] => "12345678" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("paymet_updated_at") // (Nullable) [] => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("paymet_updated_by")         // (Nullable, Min:8, Max:12) [Document] => "87654321" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("paymet_deleted_at")     // (Nullable) [] => "2025-04-05T12:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("paymet_deleted_by")         // (Nullable, Min:8, Max:12) [Document] => "12345678" || Documento del eliminador
+  
+  payments                Payment[]                                                                                          // (Relation) [] => Payment || Pagos con este método
+  
+  @@map("payment_methods_paymet")                                                                                             // (Database table mapping) [] => payment_methods_paymet || Tabla física
 }
-
 
 
 // ============= 🔓🟢 | Model Datos de pago =============
-
 model Payment {
-  id                      Int                     @id @default(autoincrement())
-  orderCode               String                  @unique @db.Char(20) @map("order_code")
-  order                   Order                   @relation(fields: [orderCode], references: [code])
-  cashBoxId               Int                     @map("cash_box_id")
-  cashBox                 CashBox                 @relation(fields: [cashBoxId], references: [id])
-
-  totalAmount             Decimal                 @db.Decimal(10, 2) @map("total_amount")
-  paymentMethodName       String                  @db.Char(25) @map("payment_method_name")
-  paymentMethod           PaymentMethod           @relation(fields: [paymentMethodName], references: [name])
-  receivedAmount          Decimal?                @db.Decimal(10, 2) @map("received_amount")
-  changeAmount            Decimal?                @db.Decimal(10, 2) @map("change_amount")
-
-  transactionNumber       String?                 @db.VarChar(100) @map("transaction_number")
-  notes                   String?                 @db.VarChar(255)
-
-  receiveUserDocument     String                  @db.Char(12) @map("receive_user_document")
-  receiveUser             User                    @relation("PaymentsReceived", fields: [receiveUserDocument], references: [documentNumber])
-
-  paidCustomerDocument    String?                 @db.Char(12) @map("paid_customer_document")
-  paidCustomer            Customer?               @relation("PaymentsMade", fields: [paidCustomerDocument], references: [documentNumber])
-  
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")  
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-
-  @@index([orderCode])
-  @@index([cashBoxId])
-  @@index([createdAt])
-
-  @@map("payments")
+  id                      Int                     @id @default(autoincrement()) @map("pay_id") // (Min:1, Required) [[CORE]] => 1 || Identificador único del pago
+  orderCode               String                  @unique @db.Char(20) @map("ord_code")        // (Min:1, Max:20, Required) [[Upper Case + Trim]] => "ORD-20250813-0001" || Código de la orden pagada
+  order                   Order                   @relation(fields: [orderCode], references: [code]) // (Relation) [] => Order || Relación con la orden
+  cashBoxId               Int                     @map("cashb_id")                              // (Min:1, Required) [] => 1 || ID de la caja donde se registró
+  cashBox                 CashBox                 @relation(fields: [cashBoxId], references: [id]) // (Relation) [] => CashBox || Caja asociada
+  paymentMethodName       String                  @db.Char(25) @map("paymet_name")              // (Min:3, Max:25, Required) [[Capitalized Case + Trim]] => "Yape" || Nombre del método de pago
+  paymentMethod           PaymentMethod           @relation(fields: [paymentMethodName], references: [name]) // (Relation) [] => PaymentMethod || Método de pago
+  totalAmount             Decimal                 @db.Decimal(10, 2) @map("pay_total_amount")   // (Min:0.01, Required) [[validDecimal]] => 47.20 || Monto total pagado
+  receivedAmount          Decimal?                @db.Decimal(10, 2) @map("pay_received_amount") // (Nullable, Min:0.01) [[validDecimal]] => 50.00 || Monto recibido (para calcular vuelto)
+  changeAmount            Decimal?                @db.Decimal(10, 2) @map("pay_change_amount")  // (Nullable, Min:0.00) [[validDecimal]] => 2.80 || Vuelto devuelto
+  transactionNumber       String?                 @db.VarChar(100) @map("pay_transaction_number") // (Nullable, Min:1, Max:100) [[Trim]] => "TX123456789" || Número de transacción (para electrónicos)
+  notes                   String?                 @db.VarChar(255) @map("pay_notes")           // (Nullable, Min:3, Max:255) [[Capitalized Case + Trim]] => "Pago rápido" || Notas del pago
+  userDocumentReceive     String                  @db.Char(12) @map("user_document_receive")    // (Min:8, Max:12, Required) [[Upper Case + Trim]] => "12345678" || Documento del usuario que recibió el pago
+  receive                 User                    @relation("PaymentsReceived", fields: [userDocumentReceive], references: [document]) // (Relation) [] => User || Usuario que recibió
+  customerDocumentPaid    String?                 @db.Char(12) @map("cust_document_paid")       // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del cliente que pagó
+  paid                    Customer?               @relation(fields: [customerDocumentPaid], references: [document]) // (Relation) [] => Customer || Cliente que realizó el pago
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("pay_created_at") // (Required) [] => "2025-04-05T11:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("pay_created_by")           // (Min:8, Max:12, Required) [[Upper Case + Trim]] => "12345678" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("pay_updated_at") // (Nullable) [] => "2025-04-05T11:05:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("pay_updated_by")           // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del actualizador
+  @@index([orderCode])                                                                                                       // (Index) [] => ord_code || Búsqueda por orden
+  @@index([cashBoxId])                                                                                                       // (Index) [] => cashb_id || Búsqueda por caja
+  @@index([createdAt])                                                                                                       // (Index) [] => pay_created_at || Búsqueda por fecha
+  @@map("payments_pay")                                                                                                       // (Database table mapping) [] => payments_pay || Tabla física
 }
 
 
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++ Inventario +++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ================================================================================
+// 📦 8. INVENTARIO
+// ================================================================================
 
 // ============= 🔒🟢 | Model Movimientos Inventario =============
-
 model InventoryMovementType {
-  code                    String                  @id @db.Char(20)             // "INCOME", "OUTCOME", "ADJUSTMENT", "RETURN"
-  name                    String                  @unique @db.VarChar(50)      // "Ingreso", "Salida", "Ajuste", "Devolucion"    (Capitalized case + trim)
-  description             String?                 @db.VarChar(255)             // (Title case + trim)
-  color                   String?                 @db.Char(7)
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")
-
-  movements               InventoryMovement[]
-
-  @@map("inventory_movement_types")
+  code                    String                  @id @db.Char(20) @map("inmoty_code")            // (Min:3, Max:20, Required) [[Upper Case + Trim, CORE]] => "INCOME, OUTCOME, ADJUSTMENT, RETURN" || Código del tipo de movimiento de inventario
+  name                    String                  @unique @db.VarChar(50) @map("inmoty_name")     // (Min:3, Max:50, Required) [[Capitalized Case + Trim]] => "Ingreso, Salida, Ajuste, Devolucion " || Nombre legible del tipo de movimiento
+  description             String?                 @db.VarChar(255) @map("inmoty_description")     // (Nullable, Min:5, Max:255) [[Title Case + Trim]] => "Entrada de productos al almacén" || Descripción del tipo de movimiento
+  color                   String?                 @db.Char(7) @map("inmoty_color")               // (Nullable, Min:7, Max:7) [[Upper Case + Trim]] => "#10B981" || Color visual del tipo
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("inmoty_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("inmoty_created_by")         // (Min:8, Max:12, Required) [[Upper Case + Trim]] => "12345678" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("inmoty_updated_at") // (Nullable) [] => "2025-04-05T10:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("inmoty_updated_by")         // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del actualizador
+  movements               InventoryMovement[]                                                                                  // (Relation) [] => InventoryMovement || Movimientos asociados a este tipo
+  @@map("inventory_movement_types_inmoty")                                                                                     // (Database table mapping) [] => inventory_movement_types_inmoty || Tabla física en la base de datos
 }
-
-
 
 // ============= 🔓🟢 | Model Inventario =============
-
 model Inventory {
-  id                      Int                     @id @default(autoincrement())
-  productId               Int                     @map("product_id")
-  product                 Product                 @relation(fields: [productId], references: [id])
-  currentQuantity         Int                     @default(0) @map("current_quantity")
-  minimumStock            Int                     @default(5) @map("minimum_stock")
-  storageLocation         String?                 @db.VarChar(50) @map("storage_location")          // "Barra", "Almacen", "Casa"   (Title case + trim)
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")  
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  inventoryMovements      InventoryMovement[]
-
-  @@unique([productId, storageLocation])
-
-  @@index([productId])
-  @@index([storageLocation])
-  @@index([productId, storageLocation])
-
-  @@map("inventories")
+  id                      Int                     @id @default(autoincrement()) @map("inv_id")   // (Min:1, Required) [[CORE]] => 1 || Identificador único del registro de inventario
+  productId               Int                     @unique @map("prod_id")                         // (Min:1, Required) [] => 5 || ID del producto asociado
+  product                 Product                 @relation(fields: [productId], references: [id]) // (Relation) [] => Product || Relación con el producto
+  currentQuantity         Int                     @default(0) @map("inv_current_quantity")       // (Min:0, Required) [[validPositive]] => 25 || Cantidad actual disponible
+  minimumStock            Int                     @default(5) @map("inv_minimum_stock")          // (Min:0, Required) [[validPositive]] => 5 || Nivel mínimo de stock antes de alerta
+  storageLocation         String?                 @db.VarChar(50) @map("inv_storage_location")   // (Nullable, Min:3, Max:50) [[Title Case + Trim]] => ""Barra", "Almacen", "Casa"" || Ubicación física del inventario
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("inv_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("inv_created_by")             // (Min:8, Max:12, Required) [[Upper Case + Trim]] => "12345678" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("inv_updated_at") // (Nullable) [] => "2025-04-05T11:00:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("inv_updated_by")             // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("inv_deleted_at")         // (Nullable) [] => "2025-04-05T12:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("inv_deleted_by")             // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "12345678" || Documento del eliminador
+  inventoryMovements      InventoryMovement[]                                                                                 
+  @@unique([productId, storageLocation])                                                                                       
+  @@index([productId])                                                                                                       
+  @@index([storageLocation])                                                                                                   
+  @@index([productId, storageLocation])                                                                                        
+  @@map("inventories_inv")                                                                                                     
 }
-
 
 
 // ============= 🔓🟢 | Model Inventario Movimientos =============
 
 model InventoryMovement {
-  id                      Int                     @id  @default(autoincrement())
-  inventoryId             Int                     @map("inventory_id")
-  inventory               Inventory               @relation(fields: [inventoryId], references: [id])
-  movementTypeCode        String                  @db.Char(20) @map("movement_type_code")
-  movementType            InventoryMovementType   @relation(fields: [movementTypeCode], references: [code])
-  quantityMovement        Int                     @map("quantity_movement")
-  reasonDescription       String                  @db.Text @map("reason_description")                        // (Title case + trim)
-
-  userDocumentNumber      String                  @db.Char(12) @map("user_document_number")
-  user                    User                    @relation(fields: [userDocumentNumber], references: [documentNumber])
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  createdBy               String                  @db.Char(12) @map("created_by")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-  updatedBy               String?                 @db.Char(12) @map("updated_by")  
-  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
-  deletedBy               String?                 @db.Char(12) @map("deleted_by")
-
-  @@index([inventoryId])
-  @@index([movementTypeCode])
-  @@index([userDocumentNumber])
-
-  @@map("inventory_movements")
+  id                                Int                         @id  @default(autoincrement()) @map("invmo_id") // (Min:1, Required) [[CORE]] => 1 || Identificador único del movimiento
+  inventoryId                       Int                         @map("inv_id")                                    // (Min:1, Required) [] => 3 || ID del registro de inventario
+  inventory                         Inventory                   @relation(fields: [inventoryId], references: [id]) // (Relation) [] => Inventory || Relación con el inventario
+  inventoryMovementTypeCode         String                      @db.Char(20) @map("inmoty_code")                 // (Min:3, Max:20, Required) [[Upper Case + Trim]] => "INCOME" || Código del tipo de movimiento
+  inventoryMovementType             InventoryMovementType       @relation(fields: [inventoryMovementTypeCode], references: [code]) // (Relation) [] => InventoryMovementType || Tipo de movimiento
+  quantityMovement                  Int                         @map("invmo_quantity_movement")                   // (Min:1, Required) [[validPositive]] => 10 || Cantidad movida (positivo o negativo según tipo)
+  reasonDescription                 String                      @db.Text @map("invmo_reason_description")        // (Min:3, Required) [[Title Case + Trim]] => "Compra de proveedor" || Descripción detallada del motivo
+  userDocument                      String                      @db.Char(12) @map("user_document")               // (Min:8, Max:12, Required) [Document] => "12345678" || Documento del usuario que registró
+  user                              User                        @relation(fields: [userDocument], references: [document]) // (Relation) [] => User || Usuario que realizó el movimiento
+  createdAt                         DateTime                    @db.Timestamp(0) @default(now()) @map("invmo_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy                         String                      @db.Char(12) @map("invmo_created_by")             // (Min:8, Max:12, Required) [Document] => "12345678" || Documento del creador
+  updatedAt                         DateTime?                   @db.Timestamp(0) @updatedAt @map("invmo_updated_at") // (Nullable) [] => "2025-04-05T10:30:00Z" || Fecha de actualización
+  updatedBy                         String?                     @db.Char(12) @map("invmo_updated_by")             // (Nullable, Min:8, Max:12) [Document] => "87654321" || Documento del actualizador
+  deletedAt                         DateTime?                   @db.Timestamp(0) @map("invmo_deleted_at")         // (Nullable) [] => "2025-04-05T11:00:00Z" || Fecha de eliminación lógica
+  deletedBy                         String?                     @db.Char(12) @map("invmo_deleted_by")             // (Nullable, Min:8, Max:12) [Document] => "12345678" || Documento del eliminador
+  @@index([inventoryId])                                                                                          
+  @@index([userDocument])                                                                                                      
+  @@map("inventory_movements_invmo")                                                                                           
 }
 
 
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++ Secuencia de Orden +++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ================================================================================
+// 🔢 9. SECUENCIA DE ÓRDENES
+// ================================================================================
 
 // ============= 🔒🟢 | Model Secuencia Orden =============
-
 model OrderSequence {
-  id                      Int                     @id @default(autoincrement())
-  sequenceYear            Int                     @map("sequence_year")
-  sequenceMonth           Int                     @map("sequence_month")
-  sequenceDay             Int                     @map("sequence_day")
-  lastOrderNumber         Int                     @default(0) @map("last_order_number")
-
-  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
-  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
-
-  @@unique([sequenceYear, sequenceMonth, sequenceDay])
-
-  @@map("order_sequences")
+  id                      Int                     @id @default(autoincrement())  @map("ordse_id")      // (Min:1, Required) [[CORE]] => 1 || Identificador único de la secuencia
+  sequenceYear            Int                     @map("ordse_sequence_year")                           // (Min:2000, Max:2999, Required) [[validPositive]] => 2025 || Año de la secuencia
+  sequenceMonth           Int                     @map("ordse_sequence_month")                          // (Min:1, Max:12, Required) [[validPositive]] => 8 || Mes de la secuencia
+  sequenceDay             Int                     @map("ordse_sequence_day")                            // (Min:1, Max:31, Required) [[validPositive]] => 13 || Día de la secuencia
+  lastOrderNumber         Int                     @default(0) @map("ordse_last_order_number")          // (Min:0, Required) [[validPositive]] => 25 || Último número de orden usado en esta fecha
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("ordse_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("ordse_updated_at")  // (Nullable) [] => "2025-04-05T10:00:00Z" || Fecha de última actualización
+  
+  @@unique([sequenceYear, sequenceMonth, sequenceDay])                                                  
+  @@map("order_sequences_ordse")                                                                        
 }
 
 
+// ================================================================================
+// 🔐 10. SESIONES Y AUTENTICACIÓN
+// ================================================================================
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// +++++++++++++++++++ Logs +++++++++++++++++++
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ============= 🔓🟢 | Model Sesiones =============
+model Session {
+  id                      String                    @id @default(uuid()) @map("sess_id")              // (Min:36, Max:36, Required) [[CORE]] => "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8" || Identificador único de sesión
+  userDocument            String?                   @db.Char(12) @map("user_document")                // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "12345678" || Documento del usuario autenticado
+  user                    User?                     @relation(fields: [userDocument], references: [document]) // (Relation) [] => User || Relación con el usuario
+  customerDocument        String?                   @db.Char(12) @map("cust_document")                // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del cliente autenticado
+  customer                Customer?                 @relation(fields: [customerDocument], references: [document]) // (Relation) [] => Customer || Relación con el cliente
+  token                   String                    @unique @db.VarChar(255)                          // (Min:30, Max:255, Required) [[Trim]] => "eyJhbGciOiJIUzI1Ni..." || Token JWT de sesión
+  deviceInfo              String?                   @db.VarChar(255) @map("sess_device_info")         // (Nullable, Min:3, Max:255) [[Title Case + Trim]] => "iPhone 14 Pro" || Información del dispositivo
+  ipAddress               String?                   @db.VarChar(50) @map("sess_ip_address")           // (Nullable, Min:7, Max:50) [[Trim]] => "192.168.1.100" || Dirección IP del cliente
+  isActive                Boolean                   @default(true) @map("sess_is_active")             // (Required) [] => true || Estado de la sesión (activa o cerrada)
+  expiresAt               DateTime                  @map("sess_expires_at")                            // (Required) [] => "2025-04-05T12:00:00Z" || Fecha de expiración del token
+  closedAt                DateTime?                 @db.Timestamp(0) @map("sess_closed_at")           // (Nullable) [] => "2025-04-05T11:30:00Z" || Fecha en que se cerró la sesión manualmente
+  closedBy                String?                   @db.Char(12) @map("sess_closed_by")               // (Nullable, Min:8, Max:12) [Document] => "12345678" || Documento del usuario que cerró la sesión
+  
+  createdAt               DateTime                  @db.Timestamp(0) @default(now()) @map("sess_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                    @db.Char(12)  @map("sess_created_by")             // (Min:8, Max:12, Required) [Document] => "12345678" || Documento del creador
+  updatedAt               DateTime?                 @db.Timestamp(0) @updatedAt @map("sess_updated_at") // (Nullable) [] => "2025-04-05T11:00:00Z" || Fecha de actualización
+  updatedBy               String?                   @db.Char(12) @map("sess_updated_by")               // (Nullable, Min:8, Max:12) [Document] => "87654321" || Documento del actualizador
+  deletedAt               DateTime?                 @db.Timestamp(0) @map("sess_deleted_at")           // (Nullable) [] => "2025-04-05T12:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                   @db.Char(12)  @map("sess_deleted_by")             // (Nullable, Min:8, Max:12) [Document] => "12345678" || Documento del eliminador
+  
+  @@index([userDocument])                                                                              
+  @@index([customerDocument])                                                                           
+  @@index([token])                                                                                      
+  @@index([isActive])                                                                                   
+  @@index([customerDocument, isActive])                                                                 
+  @@map("sessions_sess")                                                                                
+}
+
+
+// ================================================================================
+// 📝 11. LOGS Y AUDITORÍA
+// ================================================================================
 
 // ============= 🔒⚫ | Model Log =============
-
 model Log {
-  id                              Int                     @id @default(autoincrement())
-  entityName                      String                  @db.VarChar(50) @map("entity_name")           // "users, products" (lower case + trim)
-  entityId                        String?                 @map("entity_id")                             // Id registro afectado
-  action                          String                  @db.VarChar(50)                               // "created, updated, login" (lower case + trim)
-  message                         String?                 @db.VarChar(255)
+  id                              Int                     @id @default(autoincrement()) @map("log_id") // (Min:1, Required) []] => 1 || Id unico
+  entityName                      String                  @db.VarChar(50) @map("log_entity_name")     // (Min:1, Max:50, Required) [[Lower Case + Trim]] => "users" || Nombre de la entidad afectada
+  entityId                        String?                 @map("log_entity_id")                         // (Nullable, Min:1) [[Trim]] => "12345678" || ID del registro afectado
+  action                          String                  @db.VarChar(50)                               // (Min:1, Max:50, Required) [[Lower Case + Trim]] => "created" || Acción realizada (created, updated, deleted, login, logout)
+  message                         String?                 @db.VarChar(255)                              // (Nullable, Min:5, Max:255) [[Capitalized Case + Trim]] => "Usuario creado exitosamente" || Mensaje detallado del evento
+  userDocument                    String?                 @db.Char(12) @map("user_document")          // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "12345678" || Documento del usuario que generó el evento
+  user                            User?                   @relation(fields: [userDocument], references: [document]) // (Relation) [] => User || Relación con el usuario
+  customerDocument                String?                 @db.Char(12) @map("customer_document")       // (Nullable, Min:8, Max:12) [[Upper Case + Trim]] => "87654321" || Documento del cliente que generó el evento
+  customer                        Customer?               @relation(fields: [customerDocument], references: [document]) // (Relation) [] => Customer || Relación con el cliente
+  deviceInfo                      String?                 @db.VarChar(255) @map("log_device_info")     // (Nullable, Min:3, Max:255) [[Title Case + Trim]] => "Chrome en Windows 11" || Información del dispositivo
+  ipAddress                       String?                 @db.VarChar(50) @map("log_ip_address")       // (Nullable, Min:7, Max:50) [[Trim]] => "200.123.45.67" || Dirección IP desde donde se realizó la acción
   
-  userDocumentNumber              String?                 @db.Char(12) @map("user_document_number")      // "El usuario elimino... " (Capitaliz case + trim)
-  user                            User?                   @relation(fields: [userDocumentNumber], references: [documentNumber])
-  customerDocumentNumber          String?                 @db.Char(12) @map("customer_document_number") 
-  customer                        Customer?               @relation(fields: [customerDocumentNumber], references: [documentNumber])
+  createdAt                       DateTime                @db.Timestamp(0) @default(now()) @map("log_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación del log
+  
+  @@index([entityName])                                                                              
+  @@index([userDocument])                                                                              
+  @@index([customerDocument])                                                                         
+  @@index([action])                                                                                    
+  @@map("logs_log")                                                                                     
+}
 
-  createdAt                       DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
 
-  @@index([entityName])
-  @@index([userDocumentNumber])
-  @@index([customerDocumentNumber])
-  @@index([action])
-
-  @@map("logs")
+// ================================================================================
+// 🖼️ 12. IMÁGENES
+// ================================================================================
+// ============= 🔓🟢 | Model Images =============
+model Image {
+  id                      Int                     @id @default(autoincrement()) @map("img_id")        // (Min:1, Required) [[CORE]] => 1 || Identificador único de la imagen
+  name                    String                  @db.VarChar(50) @map("img_name")                   // (Min:1, Max:50, Required) [[Title Case + Trim]] => "Logo Principal" || Nombre descriptivo de la imagen
+  altText                 String                  @db.VarChar(50) @map("img_alt_text")               // (Min:1, Max:50, Required) [[Title Case + Trim]] => "Logo del restaurante" || Texto alternativo para accesibilidad
+  url                     String                  @db.Text  @map("img_url")                          // (Min:5, Required) [[Trim]] => "https://cdn.ejemplo.com/img/logo.png" || URL pública de la imagen
+  imageableId             Int                     @map("img_imageable_id")                            // (Min:1, Required) [] => 5 || ID del registro al que pertenece la imagen
+  imageableType           String                  @db.VarChar(50) @map("img_imageable_type")         // (Min:1, Max:50, Required) [[Lower Case + Trim]] => "product" || Tipo de entidad (product, user, customer, etc.)
+  isActive                Boolean                 @default(true) @map("img_is_active")               // (Required) [] => true || Indica si la imagen está activa y visible
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("img_created_at") // (Required) [] => "2025-04-05T10:00:00Z" || Fecha de creación
+  createdBy               String                  @db.Char(12) @map("img_created_by")                // (Min:8, Max:12, Required) [Document] => "12345678" || Documento del creador
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("img_updated_at") // (Nullable) [] => "2025-04-05T10:30:00Z" || Fecha de actualización
+  updatedBy               String?                 @db.Char(12) @map("img_updated_by")                // (Nullable, Min:8, Max:12) [Document] => "87654321" || Documento del actualizador
+  deletedAt               DateTime?               @db.Timestamp(0) @map("img_deleted_at")            // (Nullable) [] => "2025-04-05T11:00:00Z" || Fecha de eliminación lógica
+  deletedBy               String?                 @db.Char(12) @map("img_deleted_by")                // (Nullable, Min:8, Max:12) [Document] => "12345678" || Documento del eliminador
+  
+  @@index([imageableId, imageableType])                                                                
+  @@map("images_img")                                                                                  
 }

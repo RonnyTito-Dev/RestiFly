@@ -2,7 +2,7 @@
 
 import prisma from '@/lib/prisma';
 
-export async function accounStatusSeed() {
+export async function accountStatusSeed() {
     try {
         console.log('🟢 Iniciando el seed de [accountStatusSeed]');
         console.log('📋 Creando estados de cuenta...');

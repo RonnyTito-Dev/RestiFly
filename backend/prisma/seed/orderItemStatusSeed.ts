@@ -48,7 +48,7 @@ export async function orderItemStatusSeed() {
             skipDuplicates: true,
         });
 
-        console.log('✅ Estados de ítems de pedido creados exitosamente.');
+        console.log('✅ Estados de ítems de pedido creados exitosamente.\n');
     } catch (error) {
         console.error('❌ Error en el seed de [orderItemStatusSeed]:', error);
         throw error;

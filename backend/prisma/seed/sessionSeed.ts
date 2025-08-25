@@ -12,7 +12,7 @@ export async function sessionSeed() {
             data: [
                 {
                     id: uuidv4(),
-                    userDocumentNumber: '11122233',
+                    userDocument: '11122233',
                     token: 'token_mozo_123',
                     deviceInfo: 'Chrome 128 / Windows 11',
                     ipAddress: '192.168.1.100',
@@ -22,7 +22,7 @@ export async function sessionSeed() {
                 },
                 {
                     id: uuidv4(),
-                    userDocumentNumber: '11223344',
+                    userDocument: '11223344',
                     token: 'token_cajero_456',
                     deviceInfo: 'Firefox 128 / Linux',
                     ipAddress: '192.168.1.101',
@@ -32,7 +32,7 @@ export async function sessionSeed() {
                 },
                 {
                     id: uuidv4(),
-                    customerDocumentNumber: '40812800',
+                    customerDocument: '40812800',
                     token: 'token_cliente_789',
                     deviceInfo: 'iPhone 15 / Safari',
                     ipAddress: '200.123.45.67',

@@ -1,0 +1,1129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+// -----------------------------------------------------------
+// ----------------------- MIS MODELOS -----------------------
+// -----------------------------------------------------------
+
+// ================================================================================
+// 🏁 1. CONFIGURACIÓN GENERAL Y RESTAURANTE
+// ================================================================================
+
+// ============= 🔒🟢 | Configuracion del restaurant =============
+
+model RestaurantConfig {
+  id                      Int                       @id @default(autoincrement()) @map("restc_id")
+  name                    String                    @db.VarChar(100) @map("restc_name")                             // Nombre Restaurant       (Libre + trim)
+  activeLogoId            Int?                      @map("restc_active_logo_id")
+
+  currency                String                    @db.Char(3) @default("PEN") @map("restc_currency")              //            (Upper case + trim)
+  address                 String?                   @db.VarChar(255) @map("restc_address")                          //            (Title case + trim)
+  phone                   String?                   @db.VarChar(15)  @map("restc_phone")                            //            (trim)
+  email                   String?                   @db.VarChar(50)  @map("restc_email")                            //            (lower case + trim)
+
+  taxName                 String?                   @db.VarChar(20) @default("IGV") @map("restc_tax_name")
+  taxIncluded             Boolean                   @default(true) @map("restc_tax_included")                       // ¿El precio incluye impuesto?
+  taxType                 String?                   @db.VarChar(10) @default("INCLUIDO") @map("restc_tax_type")     // "INCLUIDO", "EXCLUIDO"
+  taxRate                 Decimal?                  @db.Decimal(5, 4) @default(0.18) @map("restc_tax_rate")         // 18% = 0.18
+
+  createdAt               DateTime                  @db.Timestamp(0) @default(now()) @map("restc_created_at")
+  createdBy               String                    @db.Char(12)  @map("restc_created_by")
+  updatedAt               DateTime?                 @db.Timestamp(0) @updatedAt @map("restc_updated_at")
+  updatedBy               String?                   @db.Char(12) @map("restc_updated_by")
+
+  @@map("restaurant_config_restc_")
+
+}
+
+
+
+// ============= 🔓🟢 | Themas =============
+
+model Theme {
+  name                        String                    @id @db.Char(20) @map("them_name")         // "MI Temita"    (Capitalized case + trim)
+  primaryColor                String                    @db.Char(7) @map("them_primary_color")     // #_______ color base 500       (Upper case + trim)
+  secondaryColor              String                    @db.Char(7) @map("them_secondary_color")   // #_______ color base 500       (Upper case + trim)
+  accentColor                 String                    @db.Char(7) @map("them_accent_color")      // #_______ color base 500       (Upper case + trim)
+  neutralColor                String                    @db.Char(7) @map("them_neutral_color")     // #_______ color base 500       (Upper case + trim)
+
+  isSystem                    Boolean                   @default(false) @map("them_is_system")
+  isPublic                    Boolean                   @default(true) @map("them_is_public")
+
+  userDocumentCreator         String?                   @db.Char(12)  @map("user_document_creator")
+  user                        User?                     @relation(fields: [userDocumentCreator], references: [document])
+
+  createdAt                   DateTime                  @db.Timestamp(0) @default(now()) @map("them_created_at")
+  updatedAt                   DateTime?                 @db.Timestamp(0) @updatedAt @map("them_updated_at")
+  updatedBy                   String?                   @db.Char(12) @map("them_updated_by")
+  deletedAt                   DateTime?                 @db.Timestamp(0) @map("them_deleted_at")
+  deletedBy                   String?                   @db.Char(12)  @map("them_deleted_by")
+
+  usersUsingThisTheme         userProfile[]
+  customersUsingThisTheme     CustomerProfile[]
+
+  @@map("themes_them")
+}
+
+
+
+// ================================================================================
+// 🏢 2. ESTRUCTURA FÍSICA DEL RESTAURANTE
+// ================================================================================
+
+// ============= 🔓🟢 | Model Zonas =============
+model RestaurantZone {
+  name                    String                  @id @db.Char(20) @map("restz_name")              // Primer Piso, Terraza, Vip (Capitalized Case +  trim)
+  description             String?                 @db.VarChar(255) @map("restz_description")       // (Title case + trim)
+  color                   String?                 @db.Char(7) @map("restz_color")
+  isActive                Boolean                 @default(true)  @map("restz_is_active")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("restz_created_at")
+  createdBy               String                  @db.Char(12) @map("restz_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("restz_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("restz_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("restz_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("restz_deleted_by")
+
+  tables                  Table[]
+
+  @@map("restaurant_zones_restz")
+}
+
+
+
+// ============= 🔓🟢 | Model Estados Mesa =============
+
+model TableStatus {
+  code                    String                  @id @db.Char(20) @map("tabls_code")                 // [CORE] AVAILABLE, BUSY, CLEANING, MAINTENANCE
+  name                    String                  @unique @db.Char(20) @map("tabls_name")             // Disponible, Ocupada, En Limpieza, Mantenimiento (Capitalized case + trim)
+  description             String?                 @db.VarChar(255) @map("tabls_description")
+  color                   String?                 @db.Char(7) @map("tabls_color")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("tabls_created_at")
+  createdBy               String                  @db.Char(12) @map("tabls_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("tabls_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("tabls_updated_by")
+
+  tables                  Table[]
+
+  @@map("table_statuses_tabls")
+}
+
+
+
+// ============= 🔓🟢 | Model Mesas =============
+
+model Table {
+  id                            Int                               @id @default(autoincrement()) @map("table_id")
+  name                          String                            @unique @db.VarChar(50) @map("table_name")           // "Manco Capac", "Atahualpa"   (Capitalized case + trim)
+  capacity                      Int                               @default(4) @map("table_capacity")
+
+  restaurantZoneName            String?                           @db.Char(20) @map("restz_name")
+  restaurantZone                RestaurantZone?                   @relation(fields: [restaurantZoneName], references: [name])                 
+  tableStatusCode               String                            @db.Char(20)  @map("tabls_code") @default("AVAILABLE")
+  tableStatus                   TableStatus                       @relation(fields: [tableStatusCode], references: [code])
+
+  createdAt                     DateTime                          @db.Timestamp(0) @default(now()) @map("table_created_at")
+  createdBy                     String                            @db.Char(12) @map("table_created_by")
+  updatedAt                     DateTime?                         @db.Timestamp(0) @updatedAt @map("table_updated_at")
+  updatedBy                     String?                           @db.Char(12) @map("table_updated_by")
+  deletedAt                     DateTime?                         @db.Timestamp(0) @map("table_deleted_at")
+  deletedBy                     String?                           @db.Char(12) @map("table_deleted_by")
+
+  combineTableItems             CombineTableItem[]
+  commands                      Command[]
+
+  @@map("tables_table")
+}
+
+
+
+// ============= 🔓🟢 | Mesas Combinadas (Grupo) =============
+
+model CombineTable {
+  id                      Int                     @id @default(autoincrement()) @map("combt_id")
+  name                    String                  @db.VarChar(50) @map("combt_name")
+
+  userDocumentCombiner    String                  @db.Char(12) @map("user_document_combiner")
+  combiner                User                    @relation("UserTableCombiner", fields: [userDocumentCombiner], references: [document])
+  combinerAt              DateTime                @db.Timestamp(0) @default(now()) @map("combt_combiner_at")
+  isActive                Boolean                 @default(true) @map("combt_is_active")
+  
+  userDocumentReleaser    String?                 @db.Char(12) @map("user_document_releaser")
+  releaser                User?                   @relation("UserTableReleaser", fields: [userDocumentReleaser], references: [document])
+  releasedAt              DateTime?               @db.Timestamp(0) @map("combt_releaser_at")
+
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("combt_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("combt_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("combt_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("combt_deleted_by")
+
+  tables                  CombineTableItem[]
+  commands                Command[]
+
+  @@map("combine_tables_combt")
+
+}
+
+
+
+// ============= 🔓🟢 | Mesas Combinadas Item  =============
+
+model CombineTableItem {
+  id                      Int                     @id @default(autoincrement()) @map("combti_id")
+  combineTableId          Int                     @map("combt_id")
+  combineTable            CombineTable            @relation(fields: [combineTableId], references: [id])
+
+  tableId                 Int                     @map("table_id")
+  table                   Table                   @relation(fields: [tableId], references: [id])
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("combti_created_at")
+  createdBy               String                  @db.Char(12) @map("combti_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("combti_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("combti_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("combti_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("combti_deleted_by")
+
+  @@unique([combineTableId, tableId])
+
+  @@map("combine_table_items_combti")
+}
+
+
+
+// ================================================================================
+// 🛒 3. CATÁLOGO DE PRODUCTOS
+// ================================================================================
+
+
+// ============= 🔓🟢 | Model Marcas =============
+
+model Brand {
+  name                    String                  @id @db.Char(20) @map("bran_name")             // "Inka Kola, Coca Cola"          (Capitalized Case + trim)
+  description             String?                 @db.VarChar(255) @map("bran_description")      // (Title case + trim)
+  color                   String?                 @db.Char(7) @map("bran_color")                 // (Upper case + trim)
+  isActive                Boolean                 @default(true) @map("bran_is_active")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("bran_created_at")
+  createdBy               String                  @db.Char(12) @map("bran_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("bran_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("bran_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("bran_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("bran_deleted_by")
+
+  products                Product[]
+
+  @@map("brands_bran")
+}
+
+
+
+// ============= 🔓🟢 | Model Tipos Producto =============
+
+model ProductType {
+  name                    String                  @id @db.Char(20) @map("prodt_name")             // Plato, Bebida    (Capitalized case + trim)
+  description             String?                 @db.VarChar(255) @map("prodt_description")
+  color                   String?                 @db.Char(7) @map("prodt_color")
+  isActive                Boolean                 @default(true) @map("prodt_is_active")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("prodt_created_at")
+  createdBy               String                  @db.Char(12) @map("prodt_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("prodt_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("prodt_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("prodt_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("prodt_deleted_by")
+
+  products                Product[]
+
+  @@map("product_types_prodt")
+}
+
+
+
+// ============= 🔓🟢 | Model Categorias Producto =============
+
+model ProductCategory {
+  name                    String                  @id @db.Char(20) @map("prodc_name")               // "Entradas", "Principales", "Postres", "Gaseosas", "Cervezas" (Capitalized case + trim)
+  description             String?                 @db.VarChar(255) @map("prodc_description")        // (Capitalized case + trim)
+  color                   String?                 @db.Char(7) @map("prodc_color")
+  isActive                Boolean                 @default(true) @map("prodc_is_active")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("prodc_created_at")
+  createdBy               String                  @db.Char(12) @map("prodc_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("prodc_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("prodc_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("prodc_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("prodc_deleted_by")
+
+  products                Product[]
+
+  @@map("product_categories_prodc")
+}
+
+
+
+// ============= 🔒⚫ | Model Estados Producto =============
+
+model ProductStatus {
+  code                    String                  @id @db.Char(20) @map("prost_code")             // [CORE] ACTIVE, INACTIVE, DISCONTINUED, OUT_OF_STOCK      (Upper case + trim)
+  name                    String                  @unique @db.VarChar(50) @map("prost_name")      // Activo, Inactivo , Descontinuado, Agotado    (Title case + trim)
+  description             String?                 @db.VarChar(255) @map("prost_description")      //                              (Capitalized case + trim)
+  color                   String?                 @db.Char(7) @map("prost_color")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("prost_created_at")
+  createdBy               String                  @db.Char(12) @map("prost_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("prost_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("prost_updated_by")
+
+  products                Product[]
+
+  @@map("product_statuses_prost")
+}
+
+
+
+// ============= 🔓🟢 | Model Productos =============
+
+model Product {
+  id                      Int                     @id @default(autoincrement()) @map("prod_id")
+  name                    String                  @db.VarChar(100) @map("prod_name")                  // (Title case + trim)
+  description             String?                 @db.VarChar(255) @map("prod_description")           // (Capitalized case + trim)
+  price                   Decimal                 @db.Decimal(10, 2) @map("prod_price")
+  offerPrice              Decimal?                @db.Decimal(10, 2) @map("prod_offer_price")
+
+  productTypeName         String                  @db.Char(20) @map("prodt_name")
+  productType             ProductType             @relation(fields: [productTypeName], references: [name])
+  productCategoryName     String                  @db.Char(20) @map("prodc_name")
+  productCategory         ProductCategory         @relation(fields: [productCategoryName], references: [name])
+  brandName               String?                 @db.Char(20) @map("bran_name")
+  brand                   Brand?                  @relation(fields: [brandName], references: [name])
+  productStatusCode       String                  @db.Char(20) @map("prost_code") @default("ACTIVE")
+  productStatus           ProductStatus           @relation(fields: [productStatusCode], references: [code])
+
+  mainImageId             Int?                    @map("img_imageable_id")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("prod_created_at")
+  createdBy               String                  @db.Char(12) @map("prod_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("prod_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("prod_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("prod_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("prod_deleted_by")
+
+  inventory               Inventory?
+  orderItems              OrderItem[]
+
+  @@map("products_prod")
+}
+
+
+
+
+// ================================================================================
+// 👥 4. GESTIÓN DE USUARIOS (EMPLEADOS)
+// ================================================================================
+
+// ============= 🔓🟢 | Model Tipos Documentos =============
+
+model DocumentType {
+  name                    String                  @id @db.Char(10) @map("doct_name")                       // DNI, RUC, CE, PASAPORTE     (Upper case + trim)
+  description             String?                 @db.VarChar(255) @map("doct_description")                // (Title case + trim)
+  digitLength             Int                     @map("doct_digit_length")
+  color                   String?                 @db.Char(7) @map("doct_color")
+  isActive                Boolean                 @default(true) @map("doct_is_active")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("doct_created_at")
+  createdBy               String                  @db.Char(12)  @map("doct_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("doct_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("doct_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("doct_deleted_at")
+  deletedBy               String?                 @db.Char(12)  @map("doct_deleted_by")
+
+  users                   User[]
+  customers               Customer[]
+  
+
+  @@map("document_types_doct")                                
+}
+
+
+
+// [SEMI CORE] ============= 🔒⚫ | Model Estados Cuenta =============
+
+model AccountStatus {
+  code                    String                  @id @db.Char(10) @map("accs_code")             // [CORE] ACTIVE, INACTIVE, SUSPENDED    (Snake + Upper case + trim)
+  name                    String                  @db.VarChar(20) @map("accs_name")              // Activa, Inactiva, Suspendida   (Title Case + trim)
+  description             String?                 @db.VarChar(255) @map("accs_description")      // (Capitalized case + trim)
+  color                   String?                 @db.Char(7) @map("accs_color")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("accs_created_at")
+  createdBy               String                  @db.Char(12)  @map("accs_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("accs_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("accs_updated_by")
+
+  users                   User[]
+  customers               Customer[]
+
+  @@map("account_statuses_accs")
+}
+
+
+
+// [SEMI CORE] ============= 🔒⚫ | Model Categorías de Permisos =============
+
+model PermissionCategory {
+  code                    String                  @id @db.Char(40) @map("perc_code")         // [CORE] user_management, product_management, customer_management, etc.
+  name                    String                  @db.VarChar(50) @map("perc_name")          // Gestión de Usuarios, Gestión de Productos    (Capitalized case + trim)
+  description             String?                 @db.VarChar(255) @map("perc_description")  // Descripción de la categoría    (Capitalized case + trim)
+  color                   String?                 @db.Char(7) @map("perc_color")
+          
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("perc_created_at")
+  createdBy               String                  @db.Char(12)  @map("perc_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("perc_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("perc_updated_by")
+
+  permissions             Permission[]
+
+  @@map("permission_categories_perc")
+}
+
+
+
+// [CORE] ============= 🔒⚫ | Model Permisos =============
+
+model Permission {
+  code                    String                       @id @db.Char(40) @map("perm_code")            // [CORE] view_user, create_user, update_user, delete_user, restore_user
+  name                    String                       @unique @db.VarChar(50) @map("perm_name")     // [CORE] Ver Usuarios, Crear Usuarios, Editar Usuarios   (Capitalized case + trim)
+  description             String?                      @db.VarChar(255) @map("perm_description")     // [CORE] (Capitalized case + trim)
+  permissionCategoryCode  String                       @db.Char(25) @map("perc_code")
+  permissioncategory      PermissionCategory           @relation(fields: [permissionCategoryCode], references: [code])
+
+  createdAt               DateTime                     @db.Timestamp(0) @default(now()) @map("perm_created_at")
+  createdBy               String                       @db.Char(12)  @map("perm_created_by")
+
+  rolePermissions         RolePermission[]
+
+  @@map("permissions_perm")
+}
+
+
+
+// ============= 🔓🟢 | Model Roles =============
+
+model Role {
+  name                    String                  @id @db.Char(20) @map("rol_name")               // Admin, Super admin, Chef, Mozo, Cajero, Barra   (Capitalized Case + Trim)
+  description             String?                 @db.VarChar(255) @map("rol_description")        // (Title case + trim)
+  color                   String?                 @db.Char(7) @map("rol_color")
+  isActive                Boolean                 @default(true) @map("rol_is_active")
+
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("rol_created_at")
+  createdBy               String                  @db.Char(12)  @map("rol_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("rol_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("rol_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("rol_deleted_at")
+  deletedBy               String?                 @db.Char(12)  @map("rol_deleted_by")
+
+  permissions             RolePermission[]
+  users                   User[]
+
+  @@map("roles_rol")
+}
+
+
+
+// ============= 🔓🟢 | Model Role Permission =============
+
+model RolePermission {
+  id                           Int                    @id @default(autoincrement()) @map("rolp_id")
+  roleName                     String                 @db.Char(20) @map("rol_name")
+  role                         Role                   @relation(fields: [roleName], references: [name])
+  permissionCode               String                 @db.Char(40) @map("perm_code")
+  permission                   Permission             @relation(fields: [permissionCode], references: [code])
+
+  createdAt                    DateTime               @db.Timestamp(0) @default(now()) @map("rolp_created_at")
+  createdBy                    String                 @db.Char(12)  @map("rolp_created_by")
+
+  @@unique([roleName, permissionCode])
+
+  @@map("role_permissions_rolp")
+
+}
+
+
+
+// ============= 🔓🟢 | Model Usuarios (Empleados) =============
+
+model User {
+  document                    String                  @id @db.Char(12) @map("user_document")          // DNI como clave primaria
+  username                    String                  @unique @db.VarChar(30) @map("user_username")   // (Libre + trim)
+  email                       String                  @unique @db.VarChar(50) @map("user_email")      // (lower case + trim)
+  password                    String                  @db.VarChar(255) @map("user_password")          // (Libre + trim)
+  pin                         String?                 @db.VarChar(255) @map("user_pin")               // (Trim)
+
+  documentTypeName            String                  @db.Char(10) @map("doct_name")
+  documentType                DocumentType            @relation(fields: [documentTypeName], references: [name])
+  roleName                    String                  @db.Char(20) @map("rol_name")
+  role                        Role                    @relation(fields: [roleName], references: [name])
+  accountStatusCode           String                  @db.Char(10) @map("accs_code") @default("ACTIVE")
+  accountStatus               AccountStatus           @relation(fields: [accountStatusCode], references: [code])
+  
+  createdAt                   DateTime                @db.Timestamp(0) @default(now()) @map("user_created_at")
+  createdBy                   String                  @db.Char(12)  @map("user_created_by")
+  updatedAt                   DateTime?               @db.Timestamp(0) @updatedAt @map("user_updated_at")
+  updatedBy                   String?                 @db.Char(12) @map("user_updated_by")
+  deletedAt                   DateTime?               @db.Timestamp(0) @map("user_deleted_at")
+  deletedBy                   String?                 @db.Char(12)  @map("user_deleted_by")
+
+  // Relaciones corregidas
+  createdThemes               Theme[]
+  combinedTables              CombineTable[]          @relation("UserTableCombiner")
+  releasedTables              CombineTable[]          @relation("UserTableReleaser")
+  userProfile                 userProfile?
+  commandOpener               Command[]               @relation("UserCommandOpener")
+  commandCloser               Command[]               @relation("UserCommandCloser")
+  orderCreator                Order[]                 @relation("UserOrderCreator")
+  orderCloser                 Order[]                 @relation("UserOrderCloser")
+  openedCashBoxes             CashBox[]               @relation("UserCashBoxOpener")
+  closedCashBoxes             CashBox[]               @relation("UserCashBoxCloser")
+  cashBoxMovements            CashBoxMovement[]
+  paymentsReceived            Payment[]               @relation("PaymentsReceived")
+  inventoryMovements          InventoryMovement[]
+  sessions                    Session[]
+  logs                        Log[]
+
+  @@index([username])
+  @@index([document])
+  @@index([email])
+  @@index([accountStatusCode])
+  @@index([email, accountStatusCode])
+
+  @@map("users_user")
+}
+
+
+
+// ============= 🔓🟢 | Model User Profile =============
+model userProfile {
+  id                          Int                   @id @default(autoincrement()) @map("userp_id")
+  userDocument                String                @unique @db.Char(12) @map("user_document")
+  user                        User                  @relation(fields: [userDocument], references: [document])
+  fullName                    String                @db.VarChar(100) @map("userp_full_name")
+  phoneNumber                 String?               @unique @db.VarChar(15) @map("userp_phone_number")
+  birthDate                   DateTime?             @map("userp_birth_date")
+  hireDate                    DateTime?             @map("userp_hire_date")
+  salary                      Decimal?              @db.Decimal(10, 2) @map("userp_salary")
+  emergencyContactName        String?               @db.VarChar(25) @map("userp_emergency_contact_name")
+  emergencyContactPhone       String?               @db.VarChar(15) @map("userp_emergency_contact_phone")
+  themeName                   String?               @db.Char(20) @map("them_name")
+  theme                       Theme?                @relation(fields: [themeName], references: [name])
+
+  createdAt                   DateTime              @db.Timestamp(0) @default(now()) @map("userp_created_at")
+  createdBy                   String                @db.Char(12) @map("userp_created_by")
+  updatedAt                   DateTime?             @db.Timestamp(0) @updatedAt @map("userp_updated_at")
+  updatedBy                   String?               @db.Char(12) @map("userp_updated_by")
+  deletedAt                   DateTime?             @db.Timestamp(0) @map("userp_deleted_at")
+  deletedBy                   String?               @db.Char(12) @map("userp_deleted_by")
+
+  @@map("user_profile_userp")
+}
+
+
+
+
+// ================================================================================
+// 🧑 5. GESTIÓN DE CLIENTES
+// ================================================================================
+
+// ============= 🔓🟢 | Model Clientes =============
+
+model Customer {
+  document                String                  @id @db.Char(12) @map("cust_document")               // DNI como clave primaria
+  username                String?                 @unique @db.VarChar(30) @map("cust_username")        // (Libre + trim)
+  email                   String?                 @unique @db.VarChar(50) @map("cust_email")           // (lower case + trim)
+  password                String?                 @db.VarChar(255) @map("cust_password")               // (Libre + trim)
+
+  documentTypeName        String                  @db.Char(10)  @map("doct_name")
+  documentType            DocumentType            @relation(fields: [documentTypeName], references: [name])
+  accountStatusCode       String                  @db.Char(10) @map("accs_code") @default("ACTIVE")
+  accountStatus           AccountStatus           @relation(fields: [accountStatusCode], references: [code])
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("created_at")
+  createdBy               String                  @db.Char(12)  @map("created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("updated_at")
+  updatedBy               String?                 @db.Char(12) @map("updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("deleted_at")
+  deletedBy               String?                 @db.Char(12)  @map("deleted_by")
+
+  profile                 CustomerProfile?
+  orders                  Order[]
+  payments                Payment[]
+  sessions                Session[]
+  logs                    Log[]
+  
+
+  @@index([document])
+  @@index([email])
+  @@index([accountStatusCode])
+  @@index([username])
+
+  @@map("customers_cust")
+}
+
+
+// ============= 🔓🟢 | Model Customer Profile =============
+
+model CustomerProfile {
+  id                              Int               @id @default(autoincrement()) @map("custp_id")
+  customerDocument                String            @unique @db.Char(12) @map("cust_document")
+  customer                        Customer          @relation(fields: [customerDocument], references: [document])
+  fullName                        String            @db.VarChar(100) @map("custp_full_name")
+  phoneNumber                     String?           @unique @db.VarChar(15) @map("custp_phone_number")
+  birthDate                       DateTime?         @map("custp_birth_date")
+
+  themeName                       String?           @db.Char(20) @map("them_name")
+  theme                           Theme?            @relation(fields: [themeName], references: [name])
+
+  createdAt                       DateTime          @db.Timestamp(0) @default(now())  @map("custp_created_at")
+  createdBy                       String            @db.Char(12) @map("custp_created_by")
+  updatedAt                       DateTime?         @db.Timestamp(0) @updatedAt @map("custp_updated_at")
+  updatedBy                       String?           @db.Char(12) @map("custp_updated_by")
+  deletedAt                       DateTime?         @db.Timestamp(0) @map("custp_deleted_at")
+  deletedBy                       String?           @db.Char(12) @map("custp_deleted_by")
+
+  @@map("customer_profile_custp")
+}
+
+
+
+
+// ================================================================================
+// 📋 6. PEDIDOS Y COMANDAS
+// ================================================================================
+
+// ============= 🔓🟢 | Model Estados de Comanda =============
+model CommandStatus {
+  code                    String                  @id @db.Char(12) @map("comms_code")         // [CORE] OPEN, CLOSED, ANNULLED
+  name                    String                  @unique @db.VarChar(20) @map("comms_name")  // Abierta, Cerrada, Anulada
+  description             String?                 @db.VarChar(255) @map("comms_description")
+  color                   String?                 @db.Char(7) @map("comms_color")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("comms_created_at")
+  createdBy               String                  @db.Char(12) @map("comms_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @map("comms_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("comms_updated_by")
+
+  commands                Command[]
+
+  @@map("command_statuses_comms")
+}
+
+
+// ============= 🔓🟢 | Model Comanda =============
+model Command {
+  id                      Int                     @id @default(autoincrement()) @map("comm_id")
+  tableId                 Int?                    @map("table_id")
+  table                   Table?                  @relation(fields: [tableId], references: [id])
+  combineTableId          Int?                    @map("combt_id")
+  combineTable            CombineTable?           @relation(fields: [combineTableId], references: [id])
+
+  userDocumentOpener      String                  @db.Char(12) @map("user_document_opener")
+  opener                  User                    @relation("UserCommandOpener", fields: [userDocumentOpener], references: [document])
+  openedAt                DateTime                @db.Timestamp(0) @default(now()) @map("comm_opened_at")
+
+  commandStatusCode       String                  @db.Char(12) @map("comms_code")
+  commandStatus           CommandStatus           @relation(fields: [commandStatusCode], references: [code])
+  notes                   String?                 @db.VarChar(255) @map("comms_notes")
+
+  userDocumentCloser      String?                 @db.Char(12) @map("user_document_closer")
+  closer                  User?                   @relation("UserCommandCloser", fields: [userDocumentCloser], references: [document])
+  closedAt                DateTime?               @db.Timestamp(0) @map("comm_closed_at")
+
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("comm_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("comm_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("comm_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("comm_deleted_by")
+
+
+  orders                  Order[]
+  orderItems              OrderItem[]
+
+  @@map("commands_comm")
+}
+
+
+// ============= 🔒⚫ | Estados de Orden =============
+
+model OrderStatus {
+  code                    String                  @id @db.Char(20) @map("ords_code")          // [CORE] OPEN, IN_PROGRESS, SERVED, ACCOUNT_REQUESTED, PAID, ANNULLED   (Upper case + trim)
+  name                    String                  @unique @db.VarChar(50) @map("ords_name")   // Abierta, En Proceso, Servida, Cuenta Solicitada, Pagada, Anulada  ...   (Capitalized case + trim)
+  description             String?                 @db.VarChar(255) @map("ords_description")   // (Title case + trim)
+  color                   String?                 @db.Char(7) @map("ords_color")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("ords_created_at")
+  createdBy               String                  @db.Char(12) @map("ords_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("ords_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("ords_updated_by")
+
+  orders                  Order[]
+
+  @@map("order_statuses_ords")
+}
+
+
+// ============= 🔒⚫ | Estado de Items de Pedido =============
+
+model OrderItemStatus {
+  code                    String                  @id @db.Char(20) @map("ordis_code")          // [CORE] PENDING, IN_PREPARATION, READY, DELIVERED, ANULLED
+  name                    String                  @unique @db.VarChar(50) @map("ordis_name")   // Pendiente, En Preparacion, Listo, Entregado, Anulado ...     (Capitalized case + trim)
+  description             String?                 @db.VarChar(255) @map("ordis_description")
+  color                   String?                 @db.Char(7) @map("ordis_color")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("ordis_created_at")
+  createdBy               String                  @db.Char(12) @map("ordis_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("ordis_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("ordis_updated_by")
+
+  orderItems              OrderItem[]
+
+  @@map("order_item_statuses_ordis")
+}
+
+
+// ============= 🔓🟢 | Model Orden =============
+
+model Order {
+  code                    String                  @id @db.Char(20) @map("ord_code")                // ORD-20250813-0001
+
+  commandId               Int                     @map("comm_id")
+  command                 Command                 @relation(fields: [commandId], references: [id])
+  userDocumentCreator     String                  @db.Char(12) @map("user_document_creator")
+  creator                 User                    @relation("UserOrderCreator", fields: [userDocumentCreator], references: [document])
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("ord_created_at")
+  customerDocument        String                  @db.Char(12) @map("cust_document")
+  customer                Customer                @relation(fields: [customerDocument], references: [document])
+
+  subtotal                Decimal                 @db.Decimal(10, 2) @map("ord_subtotal")                       // Subtotal
+  discount                Decimal                 @db.Decimal(10, 2) @default(0.00) @map("ord_discount")        // Monto Descuento
+  taxAmount               Decimal                 @db.Decimal(10, 2) @default(0.00) @map("ord_tax_amount")      // Monto impuesto
+  totalAmount             Decimal                 @db.Decimal(10, 2) @default(0.00) @map("ord_total_amount")    // Total
+
+  orderStatusCode         String                  @db.Char(20) @map("ords_code")
+  orderStatus             OrderStatus             @relation(fields: [orderStatusCode], references: [code])
+
+  userDocumentCloser      String?                 @db.Char(12) @map("user_document_closer")
+  closer                  User?                   @relation("UserOrderCloser", fields: [userDocumentCloser], references: [document])
+  closedAt                DateTime?               @db.Timestamp(0) @map("ord_closed_at")
+
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("ord_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("ord_updated_by")  
+  deletedAt               DateTime?               @db.Timestamp(0) @map("ord_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("ord_deleted_by")   
+
+  orderItems              OrderItem[]
+  payment                 Payment?
+
+  @@index([code])
+  @@index([orderStatusCode])
+  @@index([userDocumentCreator])
+  @@index([userDocumentCloser])
+
+  @@map("orders_ord")
+}
+
+
+// ============= 🔓🟢 | Model Items de Orden =============
+
+model OrderItem {
+  id                      Int                     @id @default(autoincrement()) @map("ordit_id")
+
+  commandId               Int                     @map("comm_id")
+  command                 Command                 @relation(fields: [commandId], references: [id])
+  orderCode               String?                 @db.Char(20) @map("ord_code")
+  order                   Order?                  @relation(fields: [orderCode], references: [code])
+  productId               Int                     @map("prod_id")
+  product                 Product                 @relation(fields: [productId], references: [id])
+  orderItemStatusCode     String                  @db.Char(20) @map("ordis_code") @default("PENDIENTE")
+  orderItemStatus         OrderItemStatus         @relation(fields: [orderItemStatusCode], references: [code])
+
+  quantity                Int                     @default(1) @map("ordit_quantity")
+  specialInstructions     String?                 @db.VarChar(255) @map("ordit_special_instructions")
+  unitPrice               Decimal                 @db.Decimal(10, 2) @map("ordit_unit_price")
+  discount                Decimal                 @db.Decimal(10, 2) @default(0.00) @map("ordit_discount")
+  totalPrice              Decimal                 @db.Decimal(10, 2) @map("ordit_total_price")
+  notes                   String?                 @db.VarChar(255) @map("ordit_notes")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("ordit_created_at")
+  createdBy               String                  @db.Char(12) @map("ordit_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("ordit_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("ordit_updated_by")  
+  deletedAt               DateTime?               @db.Timestamp(0) @map("ordit_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("ordit_deleted_by")
+
+  @@index([orderCode])
+  @@index([productId])
+  @@index([orderItemStatusCode])
+
+  @@map("order_items_ordit")
+}
+
+
+
+// ================================================================================
+// 💰 7. PAGOS Y CAJA
+// ================================================================================
+
+
+// ============= 🔓🟢 | Model Caja =============
+
+model CashBox {
+  id                      Int                     @id @default(autoincrement()) @map("cashb_id")
+
+  userDocumentOpened      String                  @db.Char(12) @map("user_document_opened")
+  opened                  User                    @relation("UserCashBoxOpener", fields: [userDocumentOpened], references: [document])
+  openedAt                DateTime                @db.Timestamp(0) @default(now()) @map("cashb_opened_at")
+  initialAmount           Decimal                 @db.Decimal(10, 2) @map("cashb_initial_amount")
+  userDocumentClosed      String?                 @db.Char(12) @map("user_document_closed")
+  closed                  User?                   @relation("UserCashBoxCloser", fields: [userDocumentClosed], references: [document])
+  closedAt                DateTime?               @db.Timestamp(0) @map("cashb_closed_at")
+  finalAmount             Decimal?                @db.Decimal(10, 2) @map("cashb_final_amount")
+  totalSales              Decimal?                @db.Decimal(10, 2) @map("cashb_total_sales")
+  notes                   String?                 @db.VarChar(255)  @map("cashb_notes")
+
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("cashb_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("cashb_updated_by")
+
+
+  cashboxMovements        CashBoxMovement[]
+  payments                Payment[]
+
+  @@index([userDocumentOpened])
+  @@index([userDocumentClosed])
+
+  @@map("cash_boxes_cashb")
+}
+
+
+// ============= 🔓🟢 | Model Tipo de Movimiento Caja =============
+
+model CashBoxMovementType {
+  code                     String                  @id @db.Char(20) @map("cashmt_code")           // [CORE] SALE, PURCHASE, WITHDRAWAL, DEPOSIT, OPENING, CLOSING, OTHER_INPUT, OTHER_OUTPUT
+  name                     String                  @unique @db.Char(20) @map("cashmt_name")       // Venta, Compra, Retiro, Deposito, Apertura, Cierre, Otra Entrada, Otra Salida
+  description              String?                 @db.VarChar(255) @map("cashmt_description")
+  color                    String?                 @db.Char(7) @map("cashmt_color")
+
+  createdAt                DateTime                @db.Timestamp(0) @default(now()) @map("cashmt_created_at")
+  createdBy                String                  @db.Char(12) @map("cashmt_created_by")
+  updatedAt                DateTime?               @db.Timestamp(0) @updatedAt @map("cashmt_updated_at")
+  updatedBy                String?                 @db.Char(12) @map("cashmt_updated_by")
+
+  cashBoxMovement          CashBoxMovement[]
+
+  @@map("cashbox_movement_types_cashmt")
+}
+
+
+
+// ============= 🔓🟢 | Model Movimiento Caja =============
+
+model CashBoxMovement {
+  id                            Int                     @id @default(autoincrement()) @map("cashm_id")
+  cashboxId                     Int                     @map("cashb_id")
+  cashbox                       CashBox                 @relation(fields: [cashboxId], references: [id])
+  userDocument                  String                  @db.Char(12) @map("user_document")
+  user                          User                    @relation(fields: [userDocument], references: [document])
+  cashboxMovementTypeCode       String                  @db.Char(20) @map("cashmt_code")
+  cashboxMovementType           CashBoxMovementType     @relation(fields: [cashboxMovementTypeCode], references: [code])
+
+  amount                        Decimal                 @db.Decimal(10, 2) @map("cashbm_amount")
+  concept                       String?                 @db.VarChar(255) @map("cashm_concept")
+
+  createdAt                     DateTime                @db.Timestamp(0) @default(now()) @map("cashm_created_at")
+  createdBy                     String                  @db.Char(12) @map("cashm_created_by")
+  updatedAt                     DateTime?               @db.Timestamp(0) @updatedAt @map("cashm_updated_at")
+  updatedBy                     String?                 @db.Char(12) @map("cashm_updated_by")
+
+
+  @@map("cashbox_movement_cashm")
+}
+
+
+// ============= 🔓🟢 | Model Métodos de Pago =============
+
+model PaymentMethod {
+  name                    String                  @id @db.Char(25) @map("paymet_name")           // "Efectivo", "Yape", "Plin", "Transferencia Bancaria", "Visa"   (Capitalized case + trim)
+  description             String?                 @db.VarChar(255) @map("paymet_description")    // (Title case + trim)
+  color                   String?                 @db.Char(7) @map("paymet_color")
+  isActive                Boolean                 @default(true) @map("paymet_is_active")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("paymet_created_at")
+  createdBy               String                  @db.Char(12) @map("paymet_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("paymet_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("paymet_updated_by")  
+  deletedAt               DateTime?               @db.Timestamp(0) @map("paymet_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("paymet_deleted_by")  
+
+  payments                Payment[]
+
+  @@map("payment_methods_paymet")
+}
+
+
+// ============= 🔓🟢 | Model Datos de pago =============
+
+model Payment {
+  id                      Int                     @id @default(autoincrement()) @map("pay_id")
+  orderCode               String                  @unique @db.Char(20) @map("ord_code")
+  order                   Order                   @relation(fields: [orderCode], references: [code])
+  cashBoxId               Int                     @map("cashb_id")
+  cashBox                 CashBox                 @relation(fields: [cashBoxId], references: [id])
+
+  paymentMethodName       String                  @db.Char(25) @map("paymet_name")
+  paymentMethod           PaymentMethod           @relation(fields: [paymentMethodName], references: [name])
+  totalAmount             Decimal                 @db.Decimal(10, 2) @map("pay_total_amount")
+  receivedAmount          Decimal?                @db.Decimal(10, 2) @map("pay_received_amount")
+  changeAmount            Decimal?                @db.Decimal(10, 2) @map("pay_change_amount")
+  transactionNumber       String?                 @db.VarChar(100) @map("pay_transaction_number")
+  notes                   String?                 @db.VarChar(255) @map("pay_notes")
+
+  userDocumentReceive     String                  @db.Char(12) @map("user_document_receive")
+  receive                 User                    @relation("PaymentsReceived", fields: [userDocumentReceive], references: [document])
+
+  customerDocumentPaid    String?                 @db.Char(12) @map("cust_document_paid")
+  paid                    Customer?               @relation(fields: [customerDocumentPaid], references: [document])
+  
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("pay_created_at")
+  createdBy               String                  @db.Char(12) @map("pay_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("pay_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("pay_updated_by")
+
+  @@index([orderCode])
+  @@index([cashBoxId])
+  @@index([createdAt])
+
+  @@map("payments_pay")
+}
+
+
+
+
+// ================================================================================
+// 📦 8. INVENTARIO
+// ================================================================================
+
+// ============= 🔒🟢 | Model Movimientos Inventario =============
+
+model InventoryMovementType {
+  code                    String                  @id @db.Char(20) @map("inmoty_code")            // [CORE] INCOME, OUTCOME, ADJUSTMENT, RETURN
+  name                    String                  @unique @db.VarChar(50) @map("inmoty_name")     // Ingreso, Salida, Ajuste, Devolucion    (Capitalized case + trim)
+  description             String?                 @db.VarChar(255) @map("inmoty_description")     // (Title case + trim)
+  color                   String?                 @db.Char(7) @map("inmoty_color")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("inmoty_created_at")
+  createdBy               String                  @db.Char(12) @map("inmoty_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("inmoty_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("inmoty_updated_by")
+
+  movements               InventoryMovement[]
+
+  @@map("inventory_movement_types_inmoty")
+}
+
+
+// ============= 🔓🟢 | Model Inventario =============
+
+model Inventory {
+  id                      Int                     @id @default(autoincrement()) @map("inv_id")
+  productId               Int                     @unique @map("prod_id")
+  product                 Product                 @relation(fields: [productId], references: [id])
+  currentQuantity         Int                     @default(0) @map("inv_current_quantity")
+  minimumStock            Int                     @default(5) @map("inv_minimum_stock")
+  storageLocation         String?                 @db.VarChar(50) @map("inv_storage_location")          // "Barra", "Almacen", "Casa"   (Title case + trim)
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("inv_created_at")
+  createdBy               String                  @db.Char(12) @map("inv_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("inv_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("inv_updated_by")  
+  deletedAt               DateTime?               @db.Timestamp(0) @map("inv_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("inv_deleted_by")
+
+  inventoryMovements      InventoryMovement[]
+
+  @@unique([productId, storageLocation])
+
+  @@index([productId])
+  @@index([storageLocation])
+  @@index([productId, storageLocation])
+
+  @@map("inventories_inv")
+}
+
+
+// ============= 🔓🟢 | Model Inventario Movimientos =============
+
+model InventoryMovement {
+  id                                Int                         @id  @default(autoincrement()) @map("invmo_id")
+  inventoryId                       Int                         @map("inv_id")
+  inventory                         Inventory                   @relation(fields: [inventoryId], references: [id])
+  inventoryMovementTypeCode         String                      @db.Char(20) @map("inmoty_code")
+  inventoryMovementType             InventoryMovementType       @relation(fields: [inventoryMovementTypeCode], references: [code])
+  quantityMovement                  Int                         @map("invmo_quantity_movement")
+  reasonDescription                 String                      @db.Text @map("invmo_reason_description")                        // (Title case + trim)
+
+  userDocument                      String                      @db.Char(12) @map("user_document")
+  user                              User                        @relation(fields: [userDocument], references: [document])
+
+  createdAt                         DateTime                    @db.Timestamp(0) @default(now()) @map("invmo_created_at")
+  createdBy                         String                      @db.Char(12) @map("invmo_created_by")
+  updatedAt                         DateTime?                   @db.Timestamp(0) @updatedAt @map("invmo_updated_at")
+  updatedBy                         String?                     @db.Char(12) @map("invmo_updated_by")  
+  deletedAt                         DateTime?                   @db.Timestamp(0) @map("invmo_deleted_at")
+  deletedBy                         String?                     @db.Char(12) @map("invmo_deleted_by")
+
+  @@index([inventoryId])
+  @@index([userDocument])
+
+  @@map("inventory_movements_invmo")
+}
+
+
+
+
+// ================================================================================
+// 🔢 9. SECUENCIA DE ÓRDENES
+// ================================================================================
+
+// ============= 🔒🟢 | Model Secuencia Orden =============
+
+model OrderSequence {
+  id                      Int                     @id @default(autoincrement())  @map("ordse_id")
+  sequenceYear            Int                     @map("ordse_sequence_year")
+  sequenceMonth           Int                     @map("ordse_sequence_month")
+  sequenceDay             Int                     @map("ordse_sequence_day")
+  lastOrderNumber         Int                     @default(0) @map("ordse_last_order_number")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("ordse_created_at")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("ordse_updated_at")
+
+  @@unique([sequenceYear, sequenceMonth, sequenceDay])
+
+  @@map("order_sequences_ordse")
+}
+
+
+
+
+// ================================================================================
+// 🔐 10. SESIONES Y AUTENTICACIÓN
+// ================================================================================
+
+// ============= 🔓🟢 | Model Sesiones =============
+
+model Session {
+  id                      String                    @id @default(uuid()) @map("sess_id")
+  userDocument            String?                   @db.Char(12) @map("user_document") 
+  user                    User?                     @relation(fields: [userDocument], references: [document])
+  customerDocument        String?                   @db.Char(12) @map("cust_document")
+  customer                Customer?                 @relation(fields: [customerDocument], references: [document])
+
+  token                   String                    @unique @db.VarChar(255)
+  deviceInfo              String?                   @db.VarChar(255) @map("sess_device_info") 
+  ipAddress               String?                   @db.VarChar(50) @map("sess_ip_address") 
+  isActive                Boolean                   @default(true) @map("sess_is_active")
+  expiresAt               DateTime                  @map("sess_expires_at")
+  closedAt                DateTime?                 @db.Timestamp(0) @map("sess_closed_at")
+  closedBy                String?                   @db.Char(12) @map("sess_closed_by")
+
+  createdAt               DateTime                  @db.Timestamp(0) @default(now()) @map("sess_created_at")
+  createdBy               String                    @db.Char(12)  @map("sess_created_by")
+  updatedAt               DateTime?                 @db.Timestamp(0) @updatedAt @map("sess_updated_at")
+  updatedBy               String?                   @db.Char(12) @map("sess_updated_by")
+  deletedAt               DateTime?                 @db.Timestamp(0) @map("sess_deleted_at")
+  deletedBy               String?                   @db.Char(12)  @map("sess_deleted_by")
+
+  @@index([userDocument])
+  @@index([customerDocument])
+  @@index([token])
+  @@index([isActive])
+  @@index([userDocument, isActive])
+  @@index([customerDocument, isActive])
+
+  @@map("sessions_sess")
+}
+
+
+
+
+// ================================================================================
+// 📝 11. LOGS Y AUDITORÍA
+// ================================================================================
+
+// ============= 🔒⚫ | Model Log =============
+
+model Log {
+  id                              Int                     @id @default(autoincrement()) @map("log_id")
+  entityName                      String                  @db.VarChar(50) @map("log_entity_name")           // "users, products" (lower case + trim)
+  entityId                        String?                 @map("log_entity_id")                             // Id registro afectado
+  action                          String                  @db.VarChar(50)                                   // "created, updated, login" (lower case + trim)
+  message                         String?                 @db.VarChar(255)
+  
+  userDocument                    String?                 @db.Char(12) @map("user_document")      // "El usuario elimino... " (Capitaliz case + trim)
+  user                            User?                   @relation(fields: [userDocument], references: [document])
+  customerDocument                String?                 @db.Char(12) @map("customer_document") 
+  customer                        Customer?               @relation(fields: [customerDocument], references: [document])
+
+  deviceInfo                      String?                 @db.VarChar(255) @map("log_device_info")
+  ipAddress                       String?                 @db.VarChar(50) @map("log_ip_address")
+  
+
+  createdAt                       DateTime                @db.Timestamp(0) @default(now()) @map("log_created_at")
+
+  @@index([entityName])
+  @@index([userDocument])
+  @@index([customerDocument])
+  @@index([action])
+
+  @@map("logs_log")
+}
+
+
+
+
+// ================================================================================
+// 🖼️ 12. IMÁGENES
+// ================================================================================
+
+// ============= 🔓🟢 | Model Images =============
+
+model Image {
+  id                      Int                     @id @default(autoincrement()) @map("img_id")
+  name                    String                  @db.VarChar(50) @map("img_name")                  // (Title case + trim)
+  altText                 String                  @db.VarChar(50) @map("img_alt_text")              // (Title case + trim)
+  url                     String                  @db.Text  @map("img_url")                         // (Libre + trim)
+  imageableId             Int                     @map("img_imageable_id")
+  imageableType           String                  @db.VarChar(50) @map("img_imageable_type")        // (lower case - trim)
+  isActive                Boolean                 @default(true) @map("img_is_active")
+
+  createdAt               DateTime                @db.Timestamp(0) @default(now()) @map("img_created_at")
+  createdBy               String                  @db.Char(12) @map("img_created_by")
+  updatedAt               DateTime?               @db.Timestamp(0) @updatedAt @map("img_updated_at")
+  updatedBy               String?                 @db.Char(12) @map("img_updated_by")
+  deletedAt               DateTime?               @db.Timestamp(0) @map("img_deleted_at")
+  deletedBy               String?                 @db.Char(12) @map("img_deleted_by")
+
+  @@index([imageableId, imageableType])
+  @@map("images_img")
+}

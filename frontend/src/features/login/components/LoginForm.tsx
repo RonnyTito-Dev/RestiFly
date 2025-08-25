@@ -24,7 +24,7 @@ export default function LoginForm({ className }: LoginFromProps) {
     return (
         <div className={`py-10 px-5 bg-white rounded w-full ${className}`}>
             <p className="text-2xl text-secondary-base text-center pb-3 font-bold"> Inicia Sesion </p>
-            <span className="block text-neutro-deep text-center text-sm pb-8"> a tu dashboard!! </span>
+            <span className="block text-neutro-base text-center text-sm pb-8"> Ingresa a tu dashboard! </span>
 
             <form onSubmit={onSubmit} className="flex flex-col gap-4">
                 <Input label="Email" radius="sm" size="sm" {...register('email')} />

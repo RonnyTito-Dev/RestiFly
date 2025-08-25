@@ -10,15 +10,15 @@ export async function combineTableSeed() {
         await prisma.combineTable.createMany({
             data: {
                 name: 'Grupo VIP 1',
-                combinerUserDocument: '74214623',
+                userDocumentCombiner: '11122233',
                 isActive: true,
             },
         });
 
         await prisma.combineTableItem.createMany({
             data: [
-                { combineTableId: 1, tableId: 4, createdBy: '74214623' }, // Túpac Amaru
-                { combineTableId: 1, tableId: 5, createdBy: '74214623' }, // Bartolome
+                { combineTableId: 1, tableId: 4, createdBy: '11122233' }, // Túpac Amaru
+                { combineTableId: 1, tableId: 5, createdBy: '11122233' }, // Bartolome
             ],
         });
 

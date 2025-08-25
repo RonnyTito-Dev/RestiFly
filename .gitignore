@@ -22,7 +22,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Dependencias lock temporales
-package-lock.json
+# package-lock.json
 yarn.lock
 
 # Sistema operativo / editor

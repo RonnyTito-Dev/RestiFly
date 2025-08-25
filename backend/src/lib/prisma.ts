@@ -1,6 +1,6 @@
 // 📂 src\lib\prisma.ts
 
-import { PrismaClient } from '../../generated/prisma';
+import { PrismaClient } from '@/../generated/prisma';
 import env from '@/config/env/index';
 
 // Tipamos el global

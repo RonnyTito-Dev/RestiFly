@@ -10,15 +10,13 @@ export async function customerSeed() {
         await prisma.customer.createMany({
             data: [
                 {
-                    documentNumber: '40812800',
-                    fullName: 'Ana Martinez',
+                    document: '40812800',
                     documentTypeName: 'DNI',
                     accountStatusCode: 'ACTIVE',
                     createdBy: '74214623',
                 },
                 {
-                    documentNumber: '40924500',
-                    fullName: 'Roberto Diaz',
+                    document: '40924500',
                     documentTypeName: 'DNI',
                     accountStatusCode: 'ACTIVE',
                     createdBy: '74214623',

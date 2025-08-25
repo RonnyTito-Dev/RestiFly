@@ -1,17 +1,17 @@
-// 📂 prisma\seed\cashBoxSeed.ts
+// 📂 backend\prisma\seed\cashBoxSeed.ts
 
 import prisma from '@/lib/prisma';
 
 export async function cashBoxSeed() {
     try {
         console.log('🟢 Iniciando el seed de [cashBoxSeed]');
-        console.log('💰 Creando caja inicial...');
+        console.log('💵 Creando caja inicial...');
 
         await prisma.cashBox.create({
             data: {
-                openerUserDocument: '11223344', // Cajero: Luis Gomez
-                initialAmount: 100.0,
-                notes: 'Caja inicial de prueba',
+                userDocumentOpened: '11112222', // Cajero
+                initialAmount: 200.0,
+                notes: 'Caja abierta para el turno del día',
             },
         });
 

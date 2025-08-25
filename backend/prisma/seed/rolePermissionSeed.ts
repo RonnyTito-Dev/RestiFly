@@ -1,4 +1,4 @@
-// 📂 prisma\seed\rolePermissionSeed.ts
+// 📂 prisma/seed/rolePermissionSeed.ts
 
 import prisma from '@/lib/prisma';
 
@@ -7,8 +7,14 @@ export async function rolePermissionSeed() {
         console.log('🟢 Iniciando el seed de [rolePermissionSeed]');
         console.log('📂 Asignando permisos a los roles...');
 
+        // ✅ Asegúrate de usar 12 caracteres
+        const createdBy = '74214623';
+
         await prisma.rolePermission.createMany({
             data: [
+                // ========================================================================
+                //                         👑 SUPER ADMIN
+                // ========================================================================
                 ...[
                     'view_restaurant_config',
                     'edit_restaurant_config',
@@ -43,6 +49,8 @@ export async function rolePermissionSeed() {
                     'manage_user_status',
                     'manage_user_role',
                     'manage_user_session',
+                    'view_user_profile',
+                    'edit_user_profile',
                     'view_customer',
                     'create_customer',
                     'update_customer',
@@ -51,6 +59,8 @@ export async function rolePermissionSeed() {
                     'manage_customer_status',
                     'manage_customer_session',
                     'view_customer_orders',
+                    'view_customer_profile',
+                    'edit_customer_profile',
                     'view_table_status',
                     'edit_table_status',
                     'view_restaurant_zone',
@@ -70,12 +80,14 @@ export async function rolePermissionSeed() {
                     'release_combine_table',
                     'delete_combine_table',
                     'restore_combine_table',
-                    'view_table_session',
-                    'open_table_session',
-                    'edit_table_session',
-                    'close_table_session',
-                    'delete_table_session',
-                    'restore_table_session',
+                    // ✅ Cambiado: de table_session a command
+                    'view_all_commands',
+                    'view_command',
+                    'open_command',
+                    'edit_command',
+                    'close_command',
+                    'delete_command',
+                    'restore_command',
                     'view_image',
                     'delete_image',
                     'restore_image',
@@ -122,8 +134,7 @@ export async function rolePermissionSeed() {
                     'open_cashbox',
                     'close_cashbox',
                     'update_cashbox',
-                    'delete_cashbox',
-                    'restore_cashbox',
+                    'audit_cashbox',
                     'view_payment_method',
                     'create_payment_method',
                     'edit_payment_method',
@@ -165,12 +176,15 @@ export async function rolePermissionSeed() {
                     'generate_product_report',
                     'generate_customer_report',
                     'generate_payment_report',
-                ].map((code) => ({
+                ].map((permissionCode) => ({
                     roleName: 'Super Admin',
-                    permissionCode: code,
-                    createdBy: '74214623',
+                    permissionCode,
+                    createdBy,
                 })),
 
+                // ========================================================================
+                //                         👔 ADMIN
+                // ========================================================================
                 ...[
                     'view_restaurant_config',
                     'edit_restaurant_config',
@@ -205,6 +219,8 @@ export async function rolePermissionSeed() {
                     'manage_user_status',
                     'manage_user_role',
                     'manage_user_session',
+                    'view_user_profile',
+                    'edit_user_profile',
                     'view_customer',
                     'create_customer',
                     'update_customer',
@@ -213,6 +229,7 @@ export async function rolePermissionSeed() {
                     'manage_customer_status',
                     'manage_customer_session',
                     'view_customer_orders',
+                    'view_customer_profile',
                     'view_table_status',
                     'edit_table_status',
                     'view_restaurant_zone',
@@ -232,12 +249,14 @@ export async function rolePermissionSeed() {
                     'release_combine_table',
                     'delete_combine_table',
                     'restore_combine_table',
-                    'view_table_session',
-                    'open_table_session',
-                    'edit_table_session',
-                    'close_table_session',
-                    'delete_table_session',
-                    'restore_table_session',
+                    // ✅ Cambiado: de table_session a command
+                    'view_all_commands',
+                    'view_command',
+                    'open_command',
+                    'edit_command',
+                    'close_command',
+                    'delete_command',
+                    'restore_command',
                     'view_image',
                     'delete_image',
                     'restore_image',
@@ -284,8 +303,6 @@ export async function rolePermissionSeed() {
                     'open_cashbox',
                     'close_cashbox',
                     'update_cashbox',
-                    'delete_cashbox',
-                    'restore_cashbox',
                     'view_payment_method',
                     'create_payment_method',
                     'edit_payment_method',
@@ -300,15 +317,10 @@ export async function rolePermissionSeed() {
                     'view_inventory_movement_type',
                     'edit_inventory_movement_type',
                     'view_inventory',
-                    'create_inventory',
                     'edit_inventory',
-                    'delete_inventory',
-                    'restore_inventory',
                     'view_inventory_movement',
                     'create_inventory_movement',
                     'edit_inventory_movement',
-                    'delete_inventory_movement',
-                    'restore_inventory_movement',
                     'view_order_sequence',
                     'edit_order_sequence',
                     'view_logs_general',
@@ -327,41 +339,56 @@ export async function rolePermissionSeed() {
                     'generate_product_report',
                     'generate_customer_report',
                     'generate_payment_report',
-                ].map((code) => ({
+                ].map((permissionCode) => ({
                     roleName: 'Admin',
-                    permissionCode: code,
-                    createdBy: '74214623',
+                    permissionCode,
+                    createdBy,
                 })),
 
+                // ========================================================================
+                //                         👨‍🍳 CHEF
+                // ========================================================================
                 ...[
                     'view_order',
                     'view_order_item',
                     'view_order_item_status',
                     'change_order_item_status',
                     'print_order',
-                ].map((code) => ({
+                    // ✅ Puede ver comandas (pedidos)
+                    'view_command',
+                ].map((permissionCode) => ({
                     roleName: 'Chef',
-                    permissionCode: code,
-                    createdBy: '74214623',
+                    permissionCode,
+                    createdBy,
                 })),
 
+                // ========================================================================
+                //                         🍹 BARRA
+                // ========================================================================
                 ...[
                     'view_order',
                     'view_order_item',
                     'view_order_item_status',
                     'change_order_item_status',
                     'print_order',
-                ].map((code) => ({
+                    // ✅ Puede ver comandas
+                    'view_command',
+                ].map((permissionCode) => ({
                     roleName: 'Barra',
-                    permissionCode: code,
-                    createdBy: '74214623',
+                    permissionCode,
+                    createdBy,
                 })),
 
+                // ========================================================================
+                //                         🧑‍💼 MOZO
+                // ========================================================================
                 ...[
                     'view_table',
-                    'open_table_session',
-                    'edit_table_session',
-                    'close_table_session',
+                    // ✅ Gestión de comandas
+                    'view_command',
+                    'open_command',
+                    'edit_command',
+                    'close_command',
                     'view_customer',
                     'view_product',
                     'view_order',
@@ -373,12 +400,17 @@ export async function rolePermissionSeed() {
                     'print_order',
                     'print_bill',
                     'generate_order_report',
-                ].map((code) => ({
+                    'view_user_profile',
+                    'view_customer_profile',
+                ].map((permissionCode) => ({
                     roleName: 'Mozo',
-                    permissionCode: code,
-                    createdBy: '74214623',
+                    permissionCode,
+                    createdBy,
                 })),
 
+                // ========================================================================
+                //                         💵 CAJERO
+                // ========================================================================
                 ...[
                     'view_order',
                     'view_payment',
@@ -391,15 +423,24 @@ export async function rolePermissionSeed() {
                     'print_bill',
                     'generate_cashbox_report',
                     'generate_payment_report',
-                ].map((code) => ({
+                    'view_user_profile',
+                    'view_customer_profile',
+                    // ✅ Puede ver comandas para cobrar
+                    'view_command',
+                ].map((permissionCode) => ({
                     roleName: 'Cajero',
-                    permissionCode: code,
-                    createdBy: '74214623',
+                    permissionCode,
+                    createdBy,
                 })),
 
+                // ========================================================================
+                //                         👔 SUPERVISOR
+                // ========================================================================
                 ...[
                     'view_table',
-                    'view_table_session',
+                    // ✅ Ver comandas (no todas, pero sí las necesarias)
+                    'view_all_commands',
+                    'view_command',
                     'view_customer',
                     'view_product',
                     'view_order',
@@ -407,23 +448,25 @@ export async function rolePermissionSeed() {
                     'view_payment',
                     'view_cashbox',
                     'view_session',
+                    'view_user_profile',
+                    'view_customer_profile',
                     'generate_order_report',
                     'generate_cashbox_report',
                     'generate_inventory_report',
                     'generate_product_report',
                     'generate_customer_report',
                     'generate_payment_report',
-                ].map((code) => ({
+                ].map((permissionCode) => ({
                     roleName: 'Supervisor',
-                    permissionCode: code,
-                    createdBy: '74214623',
+                    permissionCode,
+                    createdBy,
                 })),
             ],
         });
 
-        console.log('✅ Permisos asignados a roles exitosamente. \n');
+        console.log('✅ Permisos asignados a roles exitosamente.\n');
     } catch (error) {
-        console.log('❌ Error en el seed de [rolePermissionSeed]', error);
+        console.error('❌ Error en el seed de [rolePermissionSeed]:', error);
         throw error;
     }
 }

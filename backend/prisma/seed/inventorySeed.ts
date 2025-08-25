@@ -1,61 +1,61 @@
-// 📂 prisma\seed\inventorySeed.ts
+// 📂 backend\prisma\seed\inventorySeed.ts
 
 import prisma from '@/lib/prisma';
 
 export async function inventorySeed() {
     try {
         console.log('🟢 Iniciando el seed de [inventorySeed]');
-        console.log('📦 Creando inventario inicial de productos...');
+        console.log('📦 Creando inventario inicial...');
 
         await prisma.inventory.createMany({
             data: [
                 {
-                    productId: 1,
-                    currentQuantity: 10,
+                    productId: 1, // Lomo Saltado
+                    currentQuantity: 50,
                     minimumStock: 5,
-                    storageLocation: 'Almacén',
+                    storageLocation: 'Almacen',
                     createdBy: '74214623',
                 },
                 {
-                    productId: 2,
-                    currentQuantity: 15,
+                    productId: 2, // Ceviche
+                    currentQuantity: 40,
                     minimumStock: 5,
-                    storageLocation: 'Almacén',
+                    storageLocation: 'Almacen',
                     createdBy: '74214623',
                 },
                 {
-                    productId: 3,
-                    currentQuantity: 8,
+                    productId: 3, // Ají de Gallina
+                    currentQuantity: 45,
                     minimumStock: 5,
-                    storageLocation: 'Almacén',
+                    storageLocation: 'Almacen',
                     createdBy: '74214623',
                 },
                 {
-                    productId: 4,
-                    currentQuantity: 20,
-                    minimumStock: 5,
-                    storageLocation: 'Almacén',
+                    productId: 4, // Inka Cola
+                    currentQuantity: 100,
+                    minimumStock: 10,
+                    storageLocation: 'Barra',
                     createdBy: '74214623',
                 },
                 {
-                    productId: 5,
-                    currentQuantity: 25,
-                    minimumStock: 5,
-                    storageLocation: 'Almacén',
+                    productId: 5, // Coca Cola
+                    currentQuantity: 90,
+                    minimumStock: 10,
+                    storageLocation: 'Barra',
                     createdBy: '74214623',
                 },
                 {
-                    productId: 6,
-                    currentQuantity: 12,
-                    minimumStock: 5,
-                    storageLocation: 'Almacén',
-                    createdBy: '74214623',
-                },
-                {
-                    productId: 7,
+                    productId: 6, // Tiramisu
                     currentQuantity: 30,
                     minimumStock: 5,
-                    storageLocation: 'Almacén',
+                    storageLocation: 'Refrigerador',
+                    createdBy: '74214623',
+                },
+                {
+                    productId: 7, // Pilsen
+                    currentQuantity: 80,
+                    minimumStock: 10,
+                    storageLocation: 'Barra',
                     createdBy: '74214623',
                 },
             ],

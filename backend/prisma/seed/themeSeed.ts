@@ -33,7 +33,7 @@ export async function themeSeed() {
                     secondaryColor: '#DC2626',
                     accentColor: '#F59E0B',
                     neutralColor: '#F9FAFB',
-                    isSystem: false,
+                    isSystem: true,
                     isPublic: true,
                 },
             ],

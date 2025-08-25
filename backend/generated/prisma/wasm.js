@@ -146,8 +146,141 @@ exports.Prisma.ThemeScalarFieldEnum = {
   neutralColor: 'neutralColor',
   isSystem: 'isSystem',
   isPublic: 'isPublic',
-  createdUserDocument: 'createdUserDocument',
+  userDocumentCreator: 'userDocumentCreator',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.RestaurantZoneScalarFieldEnum = {
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.TableStatusScalarFieldEnum = {
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.TableScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  capacity: 'capacity',
+  restaurantZoneName: 'restaurantZoneName',
+  tableStatusCode: 'tableStatusCode',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.CombineTableScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  userDocumentCombiner: 'userDocumentCombiner',
+  combinerAt: 'combinerAt',
+  isActive: 'isActive',
+  userDocumentReleaser: 'userDocumentReleaser',
+  releasedAt: 'releasedAt',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.CombineTableItemScalarFieldEnum = {
+  id: 'id',
+  combineTableId: 'combineTableId',
+  tableId: 'tableId',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.BrandScalarFieldEnum = {
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.ProductTypeScalarFieldEnum = {
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.ProductCategoryScalarFieldEnum = {
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.ProductStatusScalarFieldEnum = {
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  price: 'price',
+  offerPrice: 'offerPrice',
+  productTypeName: 'productTypeName',
+  productCategoryName: 'productCategoryName',
+  brandName: 'brandName',
+  productStatusCode: 'productStatusCode',
+  mainImageId: 'mainImageId',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
   deletedAt: 'deletedAt',
@@ -194,11 +327,9 @@ exports.Prisma.PermissionScalarFieldEnum = {
   code: 'code',
   name: 'name',
   description: 'description',
-  categoryCode: 'categoryCode',
+  permissionCategoryCode: 'permissionCategoryCode',
   createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy'
+  createdBy: 'createdBy'
 };
 
 exports.Prisma.RoleScalarFieldEnum = {
@@ -219,28 +350,18 @@ exports.Prisma.RolePermissionScalarFieldEnum = {
   roleName: 'roleName',
   permissionCode: 'permissionCode',
   createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy'
+  createdBy: 'createdBy'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
-  documentNumber: 'documentNumber',
+  document: 'document',
   username: 'username',
   email: 'email',
   password: 'password',
   pin: 'pin',
-  fullName: 'fullName',
-  phoneNumber: 'phoneNumber',
-  birthDate: 'birthDate',
-  hireDate: 'hireDate',
-  salary: 'salary',
-  emergencyContactName: 'emergencyContactName',
-  emergencyContactPhone: 'emergencyContactPhone',
   documentTypeName: 'documentTypeName',
   roleName: 'roleName',
   accountStatusCode: 'accountStatusCode',
-  themeName: 'themeName',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
@@ -249,17 +370,17 @@ exports.Prisma.UserScalarFieldEnum = {
   deletedBy: 'deletedBy'
 };
 
-exports.Prisma.SessionScalarFieldEnum = {
+exports.Prisma.UserProfileScalarFieldEnum = {
   id: 'id',
-  userDocumentNumber: 'userDocumentNumber',
-  customerDocumentNumber: 'customerDocumentNumber',
-  token: 'token',
-  deviceInfo: 'deviceInfo',
-  ipAddress: 'ipAddress',
-  isActive: 'isActive',
-  expiresAt: 'expiresAt',
-  closedAt: 'closedAt',
-  closedBy: 'closedBy',
+  userDocument: 'userDocument',
+  fullName: 'fullName',
+  phoneNumber: 'phoneNumber',
+  birthDate: 'birthDate',
+  hireDate: 'hireDate',
+  salary: 'salary',
+  emergencyContactName: 'emergencyContactName',
+  emergencyContactPhone: 'emergencyContactPhone',
+  themeName: 'themeName',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
@@ -269,14 +390,26 @@ exports.Prisma.SessionScalarFieldEnum = {
 };
 
 exports.Prisma.CustomerScalarFieldEnum = {
-  documentNumber: 'documentNumber',
+  document: 'document',
   username: 'username',
   email: 'email',
   password: 'password',
-  fullName: 'fullName',
-  phoneNumber: 'phoneNumber',
   documentTypeName: 'documentTypeName',
   accountStatusCode: 'accountStatusCode',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.CustomerProfileScalarFieldEnum = {
+  id: 'id',
+  customerDocument: 'customerDocument',
+  fullName: 'fullName',
+  phoneNumber: 'phoneNumber',
+  birthDate: 'birthDate',
   themeName: 'themeName',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
@@ -286,181 +419,27 @@ exports.Prisma.CustomerScalarFieldEnum = {
   deletedBy: 'deletedBy'
 };
 
-exports.Prisma.CashBoxScalarFieldEnum = {
+exports.Prisma.CommandStatusScalarFieldEnum = {
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.CommandScalarFieldEnum = {
   id: 'id',
-  openerUserDocument: 'openerUserDocument',
+  tableId: 'tableId',
+  combineTableId: 'combineTableId',
+  userDocumentOpener: 'userDocumentOpener',
   openedAt: 'openedAt',
-  initialAmount: 'initialAmount',
-  closerUserDocument: 'closerUserDocument',
-  closedAt: 'closedAt',
-  finalAmount: 'finalAmount',
-  totalSales: 'totalSales',
+  commandStatusCode: 'commandStatusCode',
   notes: 'notes',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.TableStatusScalarFieldEnum = {
-  code: 'code',
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy'
-};
-
-exports.Prisma.RestaurantZoneScalarFieldEnum = {
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.TableScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  capacity: 'capacity',
-  zoneName: 'zoneName',
-  statusCode: 'statusCode',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.CombineTableScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  combinerUserDocument: 'combinerUserDocument',
-  combineAt: 'combineAt',
-  isActive: 'isActive',
-  releaserUserDocument: 'releaserUserDocument',
-  releasedAt: 'releasedAt',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.CombineTableItemScalarFieldEnum = {
-  id: 'id',
-  combineTableId: 'combineTableId',
-  tableId: 'tableId',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.TableSessionScalarFieldEnum = {
-  id: 'id',
-  tableId: 'tableId',
-  combineTableId: 'combineTableId',
-  openerUserDocument: 'openerUserDocument',
-  openedAt: 'openedAt',
-  numberPeople: 'numberPeople',
-  isActive: 'isActive',
-  closerUserDocument: 'closerUserDocument',
+  userDocumentCloser: 'userDocumentCloser',
   closedAt: 'closedAt',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.ImageScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  altText: 'altText',
-  url: 'url',
-  imageableId: 'imageableId',
-  imageableType: 'imageableType',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.BrandScalarFieldEnum = {
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.ProductStatusScalarFieldEnum = {
-  code: 'code',
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy'
-};
-
-exports.Prisma.ProductTypeScalarFieldEnum = {
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.ProductCategoryScalarFieldEnum = {
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.ProductScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  price: 'price',
-  offerPrice: 'offerPrice',
-  productTypeName: 'productTypeName',
-  productCategoryName: 'productCategoryName',
-  brandName: 'brandName',
-  productStatusCode: 'productStatusCode',
-  mainImageId: 'mainImageId',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
   deletedAt: 'deletedAt',
@@ -491,15 +470,16 @@ exports.Prisma.OrderItemStatusScalarFieldEnum = {
 
 exports.Prisma.OrderScalarFieldEnum = {
   code: 'code',
-  tableSessionId: 'tableSessionId',
-  creatorUserDocument: 'creatorUserDocument',
+  commandId: 'commandId',
+  userDocumentCreator: 'userDocumentCreator',
   createdAt: 'createdAt',
-  customerDocumentNumber: 'customerDocumentNumber',
-  subtotalAmount: 'subtotalAmount',
+  customerDocument: 'customerDocument',
+  subtotal: 'subtotal',
+  discount: 'discount',
   taxAmount: 'taxAmount',
   totalAmount: 'totalAmount',
-  statusCode: 'statusCode',
-  closerUserDocument: 'closerUserDocument',
+  orderStatusCode: 'orderStatusCode',
+  userDocumentCloser: 'userDocumentCloser',
   closedAt: 'closedAt',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
@@ -509,20 +489,60 @@ exports.Prisma.OrderScalarFieldEnum = {
 
 exports.Prisma.OrderItemScalarFieldEnum = {
   id: 'id',
+  commandId: 'commandId',
   orderCode: 'orderCode',
   productId: 'productId',
+  orderItemStatusCode: 'orderItemStatusCode',
   quantity: 'quantity',
-  unitPrice: 'unitPrice',
-  subTotal: 'subTotal',
-  discount: 'discount',
-  statusCode: 'statusCode',
   specialInstructions: 'specialInstructions',
+  unitPrice: 'unitPrice',
+  discount: 'discount',
+  totalPrice: 'totalPrice',
+  notes: 'notes',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
   deletedAt: 'deletedAt',
   deletedBy: 'deletedBy'
+};
+
+exports.Prisma.CashBoxScalarFieldEnum = {
+  id: 'id',
+  userDocumentOpened: 'userDocumentOpened',
+  openedAt: 'openedAt',
+  initialAmount: 'initialAmount',
+  userDocumentClosed: 'userDocumentClosed',
+  closedAt: 'closedAt',
+  finalAmount: 'finalAmount',
+  totalSales: 'totalSales',
+  notes: 'notes',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.CashBoxMovementTypeScalarFieldEnum = {
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.CashBoxMovementScalarFieldEnum = {
+  id: 'id',
+  cashboxId: 'cashboxId',
+  userDocument: 'userDocument',
+  cashboxMovementTypeCode: 'cashboxMovementTypeCode',
+  amount: 'amount',
+  concept: 'concept',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy'
 };
 
 exports.Prisma.PaymentMethodScalarFieldEnum = {
@@ -542,20 +562,18 @@ exports.Prisma.PaymentScalarFieldEnum = {
   id: 'id',
   orderCode: 'orderCode',
   cashBoxId: 'cashBoxId',
-  totalAmount: 'totalAmount',
   paymentMethodName: 'paymentMethodName',
+  totalAmount: 'totalAmount',
   receivedAmount: 'receivedAmount',
   changeAmount: 'changeAmount',
   transactionNumber: 'transactionNumber',
   notes: 'notes',
-  receiveUserDocument: 'receiveUserDocument',
-  paidCustomerDocument: 'paidCustomerDocument',
+  userDocumentReceive: 'userDocumentReceive',
+  customerDocumentPaid: 'customerDocumentPaid',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy'
+  updatedBy: 'updatedBy'
 };
 
 exports.Prisma.InventoryMovementTypeScalarFieldEnum = {
@@ -586,10 +604,10 @@ exports.Prisma.InventoryScalarFieldEnum = {
 exports.Prisma.InventoryMovementScalarFieldEnum = {
   id: 'id',
   inventoryId: 'inventoryId',
-  movementTypeCode: 'movementTypeCode',
+  inventoryMovementTypeCode: 'inventoryMovementTypeCode',
   quantityMovement: 'quantityMovement',
   reasonDescription: 'reasonDescription',
-  userDocumentNumber: 'userDocumentNumber',
+  userDocument: 'userDocument',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
@@ -608,15 +626,52 @@ exports.Prisma.OrderSequenceScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  userDocument: 'userDocument',
+  customerDocument: 'customerDocument',
+  token: 'token',
+  deviceInfo: 'deviceInfo',
+  ipAddress: 'ipAddress',
+  isActive: 'isActive',
+  expiresAt: 'expiresAt',
+  closedAt: 'closedAt',
+  closedBy: 'closedBy',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
+};
+
 exports.Prisma.LogScalarFieldEnum = {
   id: 'id',
   entityName: 'entityName',
   entityId: 'entityId',
   action: 'action',
   message: 'message',
-  userDocumentNumber: 'userDocumentNumber',
-  customerDocumentNumber: 'customerDocumentNumber',
+  userDocument: 'userDocument',
+  customerDocument: 'customerDocument',
+  deviceInfo: 'deviceInfo',
+  ipAddress: 'ipAddress',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.ImageScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  altText: 'altText',
+  url: 'url',
+  imageableId: 'imageableId',
+  imageableType: 'imageableType',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy'
 };
 
 exports.Prisma.SortOrder = {
@@ -647,7 +702,96 @@ exports.Prisma.ThemeOrderByRelevanceFieldEnum = {
   secondaryColor: 'secondaryColor',
   accentColor: 'accentColor',
   neutralColor: 'neutralColor',
-  createdUserDocument: 'createdUserDocument',
+  userDocumentCreator: 'userDocumentCreator',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.RestaurantZoneOrderByRelevanceFieldEnum = {
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.TableStatusOrderByRelevanceFieldEnum = {
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.TableOrderByRelevanceFieldEnum = {
+  name: 'name',
+  restaurantZoneName: 'restaurantZoneName',
+  tableStatusCode: 'tableStatusCode',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.CombineTableOrderByRelevanceFieldEnum = {
+  name: 'name',
+  userDocumentCombiner: 'userDocumentCombiner',
+  userDocumentReleaser: 'userDocumentReleaser',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.CombineTableItemOrderByRelevanceFieldEnum = {
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.BrandOrderByRelevanceFieldEnum = {
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.ProductTypeOrderByRelevanceFieldEnum = {
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.ProductCategoryOrderByRelevanceFieldEnum = {
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.ProductStatusOrderByRelevanceFieldEnum = {
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.ProductOrderByRelevanceFieldEnum = {
+  name: 'name',
+  description: 'description',
+  productTypeName: 'productTypeName',
+  productCategoryName: 'productCategoryName',
+  brandName: 'brandName',
+  productStatusCode: 'productStatusCode',
+  createdBy: 'createdBy',
   updatedBy: 'updatedBy',
   deletedBy: 'deletedBy'
 };
@@ -683,9 +827,8 @@ exports.Prisma.PermissionOrderByRelevanceFieldEnum = {
   code: 'code',
   name: 'name',
   description: 'description',
-  categoryCode: 'categoryCode',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy'
+  permissionCategoryCode: 'permissionCategoryCode',
+  createdBy: 'createdBy'
 };
 
 exports.Prisma.RoleOrderByRelevanceFieldEnum = {
@@ -700,167 +843,71 @@ exports.Prisma.RoleOrderByRelevanceFieldEnum = {
 exports.Prisma.RolePermissionOrderByRelevanceFieldEnum = {
   roleName: 'roleName',
   permissionCode: 'permissionCode',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy'
+  createdBy: 'createdBy'
 };
 
 exports.Prisma.UserOrderByRelevanceFieldEnum = {
-  documentNumber: 'documentNumber',
+  document: 'document',
   username: 'username',
   email: 'email',
   password: 'password',
   pin: 'pin',
-  fullName: 'fullName',
-  phoneNumber: 'phoneNumber',
-  emergencyContactName: 'emergencyContactName',
-  emergencyContactPhone: 'emergencyContactPhone',
   documentTypeName: 'documentTypeName',
   roleName: 'roleName',
   accountStatusCode: 'accountStatusCode',
-  themeName: 'themeName',
   createdBy: 'createdBy',
   updatedBy: 'updatedBy',
   deletedBy: 'deletedBy'
 };
 
-exports.Prisma.SessionOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userDocumentNumber: 'userDocumentNumber',
-  customerDocumentNumber: 'customerDocumentNumber',
-  token: 'token',
-  deviceInfo: 'deviceInfo',
-  ipAddress: 'ipAddress',
-  closedBy: 'closedBy',
+exports.Prisma.userProfileOrderByRelevanceFieldEnum = {
+  userDocument: 'userDocument',
+  fullName: 'fullName',
+  phoneNumber: 'phoneNumber',
+  emergencyContactName: 'emergencyContactName',
+  emergencyContactPhone: 'emergencyContactPhone',
+  themeName: 'themeName',
   createdBy: 'createdBy',
   updatedBy: 'updatedBy',
   deletedBy: 'deletedBy'
 };
 
 exports.Prisma.CustomerOrderByRelevanceFieldEnum = {
-  documentNumber: 'documentNumber',
+  document: 'document',
   username: 'username',
   email: 'email',
   password: 'password',
-  fullName: 'fullName',
-  phoneNumber: 'phoneNumber',
   documentTypeName: 'documentTypeName',
   accountStatusCode: 'accountStatusCode',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.CustomerProfileOrderByRelevanceFieldEnum = {
+  customerDocument: 'customerDocument',
+  fullName: 'fullName',
+  phoneNumber: 'phoneNumber',
   themeName: 'themeName',
   createdBy: 'createdBy',
   updatedBy: 'updatedBy',
   deletedBy: 'deletedBy'
 };
 
-exports.Prisma.CashBoxOrderByRelevanceFieldEnum = {
-  openerUserDocument: 'openerUserDocument',
-  closerUserDocument: 'closerUserDocument',
+exports.Prisma.CommandStatusOrderByRelevanceFieldEnum = {
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.CommandOrderByRelevanceFieldEnum = {
+  userDocumentOpener: 'userDocumentOpener',
+  commandStatusCode: 'commandStatusCode',
   notes: 'notes',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.TableStatusOrderByRelevanceFieldEnum = {
-  code: 'code',
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy'
-};
-
-exports.Prisma.RestaurantZoneOrderByRelevanceFieldEnum = {
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.TableOrderByRelevanceFieldEnum = {
-  name: 'name',
-  zoneName: 'zoneName',
-  statusCode: 'statusCode',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.CombineTableOrderByRelevanceFieldEnum = {
-  name: 'name',
-  combinerUserDocument: 'combinerUserDocument',
-  releaserUserDocument: 'releaserUserDocument',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.CombineTableItemOrderByRelevanceFieldEnum = {
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.TableSessionOrderByRelevanceFieldEnum = {
-  openerUserDocument: 'openerUserDocument',
-  closerUserDocument: 'closerUserDocument',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.ImageOrderByRelevanceFieldEnum = {
-  name: 'name',
-  altText: 'altText',
-  url: 'url',
-  imageableType: 'imageableType',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.BrandOrderByRelevanceFieldEnum = {
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.ProductStatusOrderByRelevanceFieldEnum = {
-  code: 'code',
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy'
-};
-
-exports.Prisma.ProductTypeOrderByRelevanceFieldEnum = {
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.ProductCategoryOrderByRelevanceFieldEnum = {
-  name: 'name',
-  description: 'description',
-  color: 'color',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
-};
-
-exports.Prisma.ProductOrderByRelevanceFieldEnum = {
-  name: 'name',
-  description: 'description',
-  productTypeName: 'productTypeName',
-  productCategoryName: 'productCategoryName',
-  brandName: 'brandName',
-  productStatusCode: 'productStatusCode',
-  createdBy: 'createdBy',
+  userDocumentCloser: 'userDocumentCloser',
   updatedBy: 'updatedBy',
   deletedBy: 'deletedBy'
 };
@@ -885,21 +932,46 @@ exports.Prisma.OrderItemStatusOrderByRelevanceFieldEnum = {
 
 exports.Prisma.OrderOrderByRelevanceFieldEnum = {
   code: 'code',
-  creatorUserDocument: 'creatorUserDocument',
-  customerDocumentNumber: 'customerDocumentNumber',
-  statusCode: 'statusCode',
-  closerUserDocument: 'closerUserDocument',
+  userDocumentCreator: 'userDocumentCreator',
+  customerDocument: 'customerDocument',
+  orderStatusCode: 'orderStatusCode',
+  userDocumentCloser: 'userDocumentCloser',
   updatedBy: 'updatedBy',
   deletedBy: 'deletedBy'
 };
 
 exports.Prisma.OrderItemOrderByRelevanceFieldEnum = {
   orderCode: 'orderCode',
-  statusCode: 'statusCode',
+  orderItemStatusCode: 'orderItemStatusCode',
   specialInstructions: 'specialInstructions',
+  notes: 'notes',
   createdBy: 'createdBy',
   updatedBy: 'updatedBy',
   deletedBy: 'deletedBy'
+};
+
+exports.Prisma.CashBoxOrderByRelevanceFieldEnum = {
+  userDocumentOpened: 'userDocumentOpened',
+  userDocumentClosed: 'userDocumentClosed',
+  notes: 'notes',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.CashBoxMovementTypeOrderByRelevanceFieldEnum = {
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy'
+};
+
+exports.Prisma.CashBoxMovementOrderByRelevanceFieldEnum = {
+  userDocument: 'userDocument',
+  cashboxMovementTypeCode: 'cashboxMovementTypeCode',
+  concept: 'concept',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy'
 };
 
 exports.Prisma.PaymentMethodOrderByRelevanceFieldEnum = {
@@ -916,11 +988,10 @@ exports.Prisma.PaymentOrderByRelevanceFieldEnum = {
   paymentMethodName: 'paymentMethodName',
   transactionNumber: 'transactionNumber',
   notes: 'notes',
-  receiveUserDocument: 'receiveUserDocument',
-  paidCustomerDocument: 'paidCustomerDocument',
+  userDocumentReceive: 'userDocumentReceive',
+  customerDocumentPaid: 'customerDocumentPaid',
   createdBy: 'createdBy',
-  updatedBy: 'updatedBy',
-  deletedBy: 'deletedBy'
+  updatedBy: 'updatedBy'
 };
 
 exports.Prisma.InventoryMovementTypeOrderByRelevanceFieldEnum = {
@@ -940,9 +1011,22 @@ exports.Prisma.InventoryOrderByRelevanceFieldEnum = {
 };
 
 exports.Prisma.InventoryMovementOrderByRelevanceFieldEnum = {
-  movementTypeCode: 'movementTypeCode',
+  inventoryMovementTypeCode: 'inventoryMovementTypeCode',
   reasonDescription: 'reasonDescription',
-  userDocumentNumber: 'userDocumentNumber',
+  userDocument: 'userDocument',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
+};
+
+exports.Prisma.SessionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userDocument: 'userDocument',
+  customerDocument: 'customerDocument',
+  token: 'token',
+  deviceInfo: 'deviceInfo',
+  ipAddress: 'ipAddress',
+  closedBy: 'closedBy',
   createdBy: 'createdBy',
   updatedBy: 'updatedBy',
   deletedBy: 'deletedBy'
@@ -953,14 +1037,36 @@ exports.Prisma.LogOrderByRelevanceFieldEnum = {
   entityId: 'entityId',
   action: 'action',
   message: 'message',
-  userDocumentNumber: 'userDocumentNumber',
-  customerDocumentNumber: 'customerDocumentNumber'
+  userDocument: 'userDocument',
+  customerDocument: 'customerDocument',
+  deviceInfo: 'deviceInfo',
+  ipAddress: 'ipAddress'
+};
+
+exports.Prisma.ImageOrderByRelevanceFieldEnum = {
+  name: 'name',
+  altText: 'altText',
+  url: 'url',
+  imageableType: 'imageableType',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy',
+  deletedBy: 'deletedBy'
 };
 
 
 exports.Prisma.ModelName = {
   RestaurantConfig: 'RestaurantConfig',
   Theme: 'Theme',
+  RestaurantZone: 'RestaurantZone',
+  TableStatus: 'TableStatus',
+  Table: 'Table',
+  CombineTable: 'CombineTable',
+  CombineTableItem: 'CombineTableItem',
+  Brand: 'Brand',
+  ProductType: 'ProductType',
+  ProductCategory: 'ProductCategory',
+  ProductStatus: 'ProductStatus',
+  Product: 'Product',
   DocumentType: 'DocumentType',
   AccountStatus: 'AccountStatus',
   PermissionCategory: 'PermissionCategory',
@@ -968,32 +1074,27 @@ exports.Prisma.ModelName = {
   Role: 'Role',
   RolePermission: 'RolePermission',
   User: 'User',
-  Session: 'Session',
+  userProfile: 'userProfile',
   Customer: 'Customer',
-  CashBox: 'CashBox',
-  TableStatus: 'TableStatus',
-  RestaurantZone: 'RestaurantZone',
-  Table: 'Table',
-  CombineTable: 'CombineTable',
-  CombineTableItem: 'CombineTableItem',
-  TableSession: 'TableSession',
-  Image: 'Image',
-  Brand: 'Brand',
-  ProductStatus: 'ProductStatus',
-  ProductType: 'ProductType',
-  ProductCategory: 'ProductCategory',
-  Product: 'Product',
+  CustomerProfile: 'CustomerProfile',
+  CommandStatus: 'CommandStatus',
+  Command: 'Command',
   OrderStatus: 'OrderStatus',
   OrderItemStatus: 'OrderItemStatus',
   Order: 'Order',
   OrderItem: 'OrderItem',
+  CashBox: 'CashBox',
+  CashBoxMovementType: 'CashBoxMovementType',
+  CashBoxMovement: 'CashBoxMovement',
   PaymentMethod: 'PaymentMethod',
   Payment: 'Payment',
   InventoryMovementType: 'InventoryMovementType',
   Inventory: 'Inventory',
   InventoryMovement: 'InventoryMovement',
   OrderSequence: 'OrderSequence',
-  Log: 'Log'
+  Session: 'Session',
+  Log: 'Log',
+  Image: 'Image'
 };
 
 /**
