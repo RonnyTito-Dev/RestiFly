@@ -1,60 +1,57 @@
 // 📂 backend\src\utils\errors.ts
 
-type typeType = 'warning' | 'error';
 type statusCodeType = number;
 type messageType = string;
-type dataType = any;
+type contentType = any;
 
 export default class MyError extends Error {
     statusCode: statusCodeType;
-    type: typeType;
-    data?: dataType;
+    content?: contentType;
 
     // Constructor
-    private constructor(message: messageType, statusCode: statusCodeType, type: typeType, data: dataType) {
+    private constructor(message: messageType, statusCode: statusCodeType, content: contentType) {
         super(message);
         this.statusCode = statusCode;
-        this.type = type;
-        this.data = data;
+        this.content = content;
     }
 
     // Error personalizado
-    static custom(message: messageType, statusCode: statusCodeType, type: typeType, data: dataType = null) {
-        return new MyError(message, statusCode, type, data);
+    static custom(message: messageType, statusCode: statusCodeType, content: contentType = null) {
+        return new MyError(message, statusCode, content);
     }
 
     // Error BadRequest
-    static badRequest(message: messageType, data: dataType = null) {
-        return new MyError(message, 400, 'warning', data);
+    static badRequest(message: messageType, content: contentType = null) {
+        return new MyError(message, 400, content);
     }
 
     // Validation Error
-    static validation(message: messageType, data: dataType = null) {
-        return new MyError(message, 400, 'warning', data);
+    static validation(message: messageType, content: contentType = null) {
+        return new MyError(message, 400, content);
     }
 
     // No Autorizado
-    static unauthorized(message: messageType, data: dataType = null) {
-        return new MyError(message, 401, 'error', data);
+    static unauthorized(message: messageType, content: contentType = null) {
+        return new MyError(message, 401, content);
     }
 
     // Sin Permisos
-    static forbiddden(message: messageType, data: dataType = null) {
-        return new MyError(message, 403, 'error', data);
+    static forbiddden(message: messageType, content: contentType = null) {
+        return new MyError(message, 403, content);
     }
 
     // Recurso no encontrado
-    static notFound(message: messageType, data: dataType = null) {
-        return new MyError(message, 404, 'warning', data);
+    static notFound(message: messageType, content: contentType = null) {
+        return new MyError(message, 404, content);
     }
 
     // Conflicto (duplicado)
-    static conflict(message: messageType, data: dataType = null) {
-        return new MyError(message, 409, 'warning', data);
+    static conflict(message: messageType, content: contentType = null) {
+        return new MyError(message, 409, content);
     }
 
     // Error Interno (fallo del server)
-    static internal(message: messageType, data: dataType = null) {
-        return new MyError(message, 500, 'error', data);
+    static internal(message: messageType, content: contentType = null) {
+        return new MyError(message, 500, content);
     }
 }

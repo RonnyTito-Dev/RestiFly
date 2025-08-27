@@ -1,11 +1,12 @@
 // 📂 backend\src\features\auth\authController.ts
 
 import type { Request, Response, NextFunction } from 'express';
-import { successResponse } from '@/helpers/response';
+import { successResponse, errorResponse } from '@/helpers/response';
+import MyError from '@/utils/MyError';
 
 export async function login(req: Request, res: Response, next: NextFunction) {
     try {
-        return successResponse(res, 'success', 'Hola amigo desde auth controller');
+        throw MyError.unauthorized('No estas autenticado');
     } catch (err) {
         next(err);
     }

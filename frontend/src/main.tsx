@@ -3,12 +3,8 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 
-import { HeroUIProvider } from '@heroui/system';
-
 createRoot(document.getElementById('root')!).render(
-    <HeroUIProvider>
-        <StrictMode>
-            <App />
-        </StrictMode>
-    </HeroUIProvider>
+    <StrictMode>
+        <App />
+    </StrictMode>
 );
