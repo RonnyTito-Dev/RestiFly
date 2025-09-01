@@ -12,10 +12,10 @@ export async function loginService({ email, password }: LoginSchemaType) {
     // Buscar en db
 
     const user = await findUserByEmail(email);
-    if (!user) throw MyError.badRequest('Las credenciales ingresadas con incorrectas');
+    if (!user) throw MyError.unauthorized('Las credenciales ingresadas con incorrectas');
 
     const validPassword = await bcrypt.compare(password, user.user_password);
-    if (!validPassword) throw MyError.badRequest('Las credenciales ingresadas con incorrectas');
+    if (!validPassword) throw MyError.unauthorized('Las credenciales ingresadas con incorrectas');
 
     const token = jwt.sign(
         {
