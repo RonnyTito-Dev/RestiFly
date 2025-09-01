@@ -17,16 +17,16 @@ class Mysql {
     }
 
     // Metodos para consultar
-    async query<T = any>(sql: string, params?: any[]): Promise<T | T[]> {
+    async query<T = any>(sql: string, params?: any[]): Promise<T | T[] | null> {
         const [rows] = await this.pool.query<RowDataPacket[]>(sql, params);
         const plainRows = JSON.parse(JSON.stringify(rows));
 
-        return plainRows.length === 1 ? (plainRows[0] as T) : (plainRows as T[]);
+        return plainRows.length === 0 ? null : plainRows.length === 1 ? (plainRows[0] as T) : (plainRows as T[]);
     }
 
     // Metodo test a la conexion
     async testConnexion() {
-        const test = await this.query('SELECT * FROM users_user');
+        const test = await this.query('SELECT NOW()');
         console.log('🟩 Conexion exitosa con la DB =>', test);
     }
 }

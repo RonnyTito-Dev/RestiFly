@@ -1,23 +1,31 @@
 // 📂 backend\src\features\auth\authService.ts
 
-import { loginSchema } from './authSchema';
-import type { LoginSchemaType } from './authSchema';
+import { findUserByEmail } from './authModel';
+import MyError from '@/utils/MyError';
 import bcrypt from 'bcrypt';
-import prisma from '@/lib/prisma';
+import jwt from 'jsonwebtoken';
+import env from '@/config/env/index';
+import type { LoginSchemaType } from './authSchema';
 
 // ===================== Funcion Iniciar Sesion (Login) =====================
-export async function loginUser(loginData: LoginSchemaType) {
-    // Validacion de zod
-    const { data, error } = loginSchema.safeParse(loginData);
-    if (error) throw new Error(error.issues[0]?.message);
-
+export async function loginService({ email, password }: LoginSchemaType) {
     // Buscar en db
-    const user = await prisma.user.findUnique({
-        where: {
-            email: data.email,
-        },
-    });
 
-    if (user) console.log('Si hay usuario, pero aun no password');
-    else console.log('no existe ese usuario');
+    const user = await findUserByEmail(email);
+    if (!user) throw MyError.badRequest('Las credenciales ingresadas con incorrectas');
+
+    const validPassword = await bcrypt.compare(password, user.user_password);
+    if (!validPassword) throw MyError.badRequest('Las credenciales ingresadas con incorrectas');
+
+    const token = jwt.sign(
+        {
+            id: user.user_document,
+            email: user.user_email,
+            rol: user.role_name,
+        },
+        env.JWT_SECRET as jwt.Secret,
+        { expiresIn: env.JWT_EXPIRES_IN as any }
+    );
+
+    return { user, token };
 }

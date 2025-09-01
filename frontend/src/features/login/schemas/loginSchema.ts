@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 
-export const loginSchema = z.object({
+export const loginRequestSchema = z.object({
     email: z
         .string()
         .trim()
@@ -20,4 +20,4 @@ export const loginSchema = z.object({
         .max(50, 'La contaseña no debe superar los 50 caracteres'),
 });
 
-export type LoginSchemaType = z.infer<typeof loginSchema>;
+export type LoginRequestType = z.infer<typeof loginRequestSchema>;

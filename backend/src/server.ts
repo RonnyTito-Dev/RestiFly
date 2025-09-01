@@ -30,7 +30,8 @@ class Server {
     private definedCors() {
         this.app.use(
             cors({
-                origin: ['http://localhost:5371', '*'],
+                origin: ['http://localhost:5173', '*'],
+                credentials: true,
             })
         );
     }
